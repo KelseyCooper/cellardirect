@@ -3,6 +3,7 @@ require('dotenv').config()
 
 const fs = require('fs')
 const express = require('express')
+const bodyParser = require('body-parser')
 const session = require('express-session')
 const RedisStore = require('connect-redis')(session)
 const path = require('path')
@@ -66,6 +67,8 @@ const registerWebhook = function(shopDomain, accessToken, webhook) {
 const app = express()
 const isDevelopment = NODE_ENV !== 'production'
 
+app.use(bodyParser.json())
+
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 app.use(logger('dev'))
@@ -108,8 +111,9 @@ app.get('/install', (req, res) => res.render('install'))
 
 
 
-app.get('/custom-shipping', function(req, res) {
-  console.log(req);
+app.post('/custom-shipping', function(req, res) {
+  console.log(req.body);
+  
   const data = {
     rates: [
       {
