@@ -18,6 +18,10 @@ const ShopifyAPIClient = require('shopify-api-node')
 const ShopifyExpress = require('@shopify/shopify-express')
 const { MemoryStrategy } = require('@shopify/shopify-express/strategies')
 
+const environment = process.env.NODE_ENV || "development";
+const configuration = require("./knexfile")[environment];
+const database = require("knex")(configuration);
+
 const {
   SHOPIFY_APP_KEY,
   SHOPIFY_APP_HOST,
@@ -67,7 +71,16 @@ const registerWebhook = function(shopDomain, accessToken, webhook) {
 const app = express()
 const isDevelopment = NODE_ENV !== 'production'
 
-app.use(bodyParser.json())
+app.use(bodyParser.json({
+  type:'*/*',
+  limit: '50mb',
+  verify: function(req, res, buf) {
+      if (req.url.startsWith('/webhooks')){
+        req.rawbody = buf;
+      }
+  }
+ })
+);
 
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
@@ -109,26 +122,68 @@ if (isDevelopment) {
 // Install
 app.get('/install', (req, res) => res.render('install'))
 
-
-
 app.post('/custom-shipping', function(req, res) {
-  console.log(req.body);
-  
+  console.log(req.body.rate.destination.province)
+
+  switch (req.body.rate.destination.province) {
+    case 'AB':
+      console.log('Province is: AB')
+      break
+    case 'BC':
+      console.log('Province is: BC')
+      break
+    case 'MB':
+      console.log('Province is: MB')
+      break
+    case 'NB':
+      console.log('Province is: NB')
+      break
+    case 'NL':
+      console.log('Province is: NL')
+      break
+    case 'NT':
+      console.log('Province is: NT')
+      break
+    case 'NS':
+      console.log('Province is: NS')
+      break
+    case 'NU':
+      console.log('Province is: NU')
+      break
+    case 'ON':
+      console.log('Province is: ON')
+      break
+    case 'PE':
+      console.log('Province is: PE')
+      break
+    case 'QC':
+      console.log('Province is: QC')
+      break
+    case 'SK':
+      console.log('Province is: SK')
+      break
+    case 'YT':
+      console.log('Province is: YT')
+      break
+    default:
+      console.log('default')
+  }
+
   const data = {
     rates: [
       {
         "service_name": "canadapost-overnight",
-        "service_code": "ON",
+        "service_code": "BC",
         "total_price": "1295",
         "description": "This is the fastest option by far",
         "currency": "CAD",
         "min_delivery_date": "2013-04-12 14:48:45 -0400",
         "max_delivery_date": "2013-04-12 14:48:45 -0400"
-    }
+      },
     ],
   }
-  res.json(data);
-});
+  res.json(data)
+})
 
 // Create shopify middlewares and router
 const shopify = ShopifyExpress(shopifyConfig)
@@ -149,19 +204,25 @@ app.get('/', withShop, function(request, response) {
   })
 })
 
-app.post(
-  '/order-create',
-  withWebhook((error, request) => {
-    if (error) {
-      console.error(error)
-      return
-    }
+// app.post(
+//   '/order-create',
+//   withWebhook((error, request) => {
+//     if (error) {
+//       console.error(error)
+//       return
+//     }
 
-    console.log('We got a webhook!')
-    console.log('Details: ', request.webhook)
-    console.log('Body:', request.body)
-  }),
-)
+//     console.log('We got a webhook!')
+//     console.log('Details: ', request.webhook)
+//     console.log('Body:', request.body)
+//   }),
+// )
+
+app.post('/order-create', function(req, res) {
+  // console.log('webhook functioning');
+  console.log(req.body);
+  res.sendStatus(200);
+})
 
 // Error Handlers
 app.use(function(req, res, next) {
