@@ -110,12 +110,7 @@ const isDevelopment = NODE_ENV !== 'production'
 app.use(
   bodyParser.json({
     type: '*/*',
-    limit: '50mb',
-    verify: function(req, res, buf) {
-      if (req.url.startsWith('/webhooks')) {
-        req.rawbody = buf
-      }
-    },
+    
   }),
 )
 
@@ -256,45 +251,38 @@ app.get('/', withShop, function(request, response) {
 // )
 
 function newCustomerOrder(body) {
-  const { id: order_id_num } = body
-  const order_id = order_id_num.toString()
   const {
-    id: customer_id_num,
     email,
     first_name: firstName,
     last_name: lastName,
   } = body.customer
-  const customer_id = customer_id_num.toString()
 
   return knex('customers')
     .select()
-    .where('shopify_id', customer_id)
+    .where('email', email)
     .then(result => {
       if (result.length === 0) {
+        console.log('new user created');
         return knex('customers')
           .insert({
             first_name: firstName,
             last_name: lastName,
             email,
-            shopify_id: customer_id,
           })
           .returning('id')
           .then(id => {
             return knex('orders')
               .insert({
-                order_number: order_id,
                 customer_id: id[0],
               })
               .returning('id')
           })
           .then(id => {
-            console.log(id)
 
             body.line_items.map(item => {
               // console.log(item.title)
               return knex('purchased_items')
                 .insert({
-                  shopify_item_id: item.product_id,
                   product_name: item.title,
                   quantity: item.quantity,
                   order_id: id[0],
@@ -306,9 +294,9 @@ function newCustomerOrder(body) {
             return true
           })
       } else {
+        console.log('append to current user');
         return knex('orders')
           .insert({
-            order_number: order_id,
             customer_id: result[0].id,
           })
           .returning('id')
@@ -317,7 +305,6 @@ function newCustomerOrder(body) {
               // console.log(item.title)
               return knex('purchased_items')
                 .insert({
-                  shopify_item_id: item.product_id,
                   product_name: item.title,
                   quantity: item.quantity,
                   order_id: id[0],
@@ -335,7 +322,7 @@ function newCustomerOrder(body) {
 }
 
 app.post('/order-create', function(req, res) {
-  let purchased_items = []
+  
 
   // console.log(
   //   `customer id: ${customer_id},
