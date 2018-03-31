@@ -110,7 +110,6 @@ const isDevelopment = NODE_ENV !== 'production'
 app.use(
   bodyParser.json({
     type: '*/*',
-    
   }),
 )
 
@@ -154,16 +153,44 @@ if (isDevelopment) {
 // Install
 app.get('/install', (req, res) => res.render('install'))
 
+async function something(rate) {
+  const { address1: address } = rate.destination
+  let orderTotal = 0
+  await rate.items.map(item => {
+    orderTotal += item.quantity
+  })
+  return await knex('customers')
+    .select()
+    .where('address', address)
+    .returning('*')
+    .then(result => {
+      return knex('orders')
+        .where('customer_id', result[0].id)
+        .join('purchased_items', 'orders.id', '=', 'purchased_items.order_id')
+        .then(result => {
+          result.map(item => {
+            orderTotal += item.quantity
+          })
+          return orderTotal
+        })
+    })
+}
+
 app.post('/custom-shipping', function(req, res) {
-  console.log(req.body.rate.destination.province)
+  const { address1: address } = req.body.rate.destination
+  // console.log(req.body.rate.destination.address1)
 
   switch (req.body.rate.destination.province) {
     case 'AB':
       console.log('Province is: AB')
       break
     case 'BC':
-      console.log('Province is: BC')
+      something(req.body.rate).then(result => {
+        console.log(result)
+      })
+
       break
+    // return true
     case 'MB':
       console.log('Province is: MB')
       break
@@ -251,23 +278,22 @@ app.get('/', withShop, function(request, response) {
 // )
 
 function newCustomerOrder(body) {
-  const {
-    email,
-    first_name: firstName,
-    last_name: lastName,
-  } = body.customer
+  const { email, first_name: firstName, last_name: lastName } = body.customer
+
+  const { address1: address } = body.customer.default_address
 
   return knex('customers')
     .select()
-    .where('email', email)
+    .where('address', address)
     .then(result => {
       if (result.length === 0) {
-        console.log('new user created');
+        console.log('new user created')
         return knex('customers')
           .insert({
             first_name: firstName,
             last_name: lastName,
             email,
+            address,
           })
           .returning('id')
           .then(id => {
@@ -278,7 +304,6 @@ function newCustomerOrder(body) {
               .returning('id')
           })
           .then(id => {
-
             body.line_items.map(item => {
               // console.log(item.title)
               return knex('purchased_items')
@@ -294,7 +319,7 @@ function newCustomerOrder(body) {
             return true
           })
       } else {
-        console.log('append to current user');
+        console.log('append to current user')
         return knex('orders')
           .insert({
             customer_id: result[0].id,
@@ -322,8 +347,6 @@ function newCustomerOrder(body) {
 }
 
 app.post('/order-create', function(req, res) {
-  
-
   // console.log(
   //   `customer id: ${customer_id},
   //   customer email: ${email},

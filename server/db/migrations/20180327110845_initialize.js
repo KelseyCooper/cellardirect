@@ -4,7 +4,8 @@ exports.up = function(knex, Promise) {
         table.increments('id')
         table.string('first_name')
         table.string('last_name')
-        table.string('email').unique()
+        table.string('address').unique()
+        table.string('email')
       }),
   
       knex.schema.createTable('orders', table => {
