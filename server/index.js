@@ -155,6 +155,7 @@ app.get('/install', (req, res) => res.render('install'))
 
 async function something(rate) {
   const { address1: address } = rate.destination
+  const data = {}
   let orderTotal = 0
   await rate.items.map(item => {
     orderTotal += item.quantity
@@ -171,22 +172,47 @@ async function something(rate) {
           result.map(item => {
             orderTotal += item.quantity
           })
-          return orderTotal
+          data.orderTotal = orderTotal
+          return data
         })
     })
 }
 
-app.post('/custom-shipping', function(req, res) {
-  const { address1: address } = req.body.rate.destination
-  // console.log(req.body.rate.destination.address1)
+function caseAmount(num) {
+  let number = Math.floor(num / 12) + 1;
+  if (num % 12 === 0) {
+    number -= 1
+  }
+  return number
+}
 
+app.post('/custom-shipping', function(req, res) {
+  let data = {
+    rates: [
+      {
+        service_name: 'Cellar Direct Custom Shipping',
+        service_code: 'BC',
+        total_price: '1295',
+        currency: 'CAD',
+        min_delivery_date: '2013-04-12 14:48:45 -0400',
+        max_delivery_date: '2013-04-12 14:48:45 -0400',
+      },
+    ],
+  }
   switch (req.body.rate.destination.province) {
     case 'AB':
       console.log('Province is: AB')
       break
     case 'BC':
       something(req.body.rate).then(result => {
-        console.log(result)
+        console.log(result.orderTotal);
+        
+        if (result.orderTotal >= 1 && result.orderTotal < 10) {
+          console.log('something'); 
+          data.rates[0].description = `You have currently purchased ${result.orderTotal} bottles of your first case.`
+          data.rates[0].service_name = `Cellar Direct Customer Shipping - ${caseAmount(result.orderTotal)} Case - {already paid or not}`
+          res.json(data)
+        }
       })
 
       break
@@ -227,21 +253,6 @@ app.post('/custom-shipping', function(req, res) {
     default:
       console.log('default')
   }
-
-  const data = {
-    rates: [
-      {
-        service_name: 'canadapost-overnight',
-        service_code: 'BC',
-        total_price: '1295',
-        description: 'This is the fastest option by far',
-        currency: 'CAD',
-        min_delivery_date: '2013-04-12 14:48:45 -0400',
-        max_delivery_date: '2013-04-12 14:48:45 -0400',
-      },
-    ],
-  }
-  res.json(data)
 })
 
 // Create shopify middlewares and router
