@@ -153,14 +153,27 @@ if (isDevelopment) {
 // Install
 app.get('/install', (req, res) => res.render('install'))
 
-async function findAddress(rate) {
-  console.log(rate, 'i am the rate inside the address')
+function caseAmount(num) {
+  let number = Math.floor(num / 12) + 1
+  if (num % 12 === 0) {
+    number -= 1
+  }
+  return number
+}
 
+async function findAddress(rate) {
   const { address1: address } = rate.destination
   const data = {}
   let orderTotal = 0
   await rate.items.map(item => {
-    orderTotal += item.quantity
+    //TODO test this and see if it works
+    // if any item comes in with a quantitity of 12, it is substracted from it's total.
+    let quantity = 0
+    quantity += item.quantity
+    if (item.quantity > 12) {
+      quantity - 12
+    }
+    orderTotal += quantity
   })
   return await knex('customers')
     .select()
@@ -169,12 +182,13 @@ async function findAddress(rate) {
     .then(result => {
       // Checks if an address exists in the system
       if (result.length === 0) {
-        data.casesBought = 0
         data.orderTotal = orderTotal
+        data.prePurchasedCases = 0
+        data.prePurchasedBottles = 0
         return data
       } else {
-        console.log(result)
-
+        data.prePurchasedCases = caseAmount(result[0].bottles_purchased)
+        data.prePurchasedBottles = result[0].bottles_purchased
         return knex('orders')
           .where('customer_id', result[0].id)
           .join('purchased_items', 'orders.id', '=', 'purchased_items.order_id')
@@ -189,13 +203,7 @@ async function findAddress(rate) {
     })
 }
 
-function caseAmount(num) {
-  let number = Math.floor(num / 12) + 1
-  if (num % 12 === 0) {
-    number -= 1
-  }
-  return number
-}
+const shippingRates = { bc: [00, 100, 200, 300, 400, 500] }
 
 app.post('/custom-shipping', function(req, res) {
   let data = {
@@ -205,8 +213,6 @@ app.post('/custom-shipping', function(req, res) {
         service_code: 'BC',
         total_price: '1295',
         currency: 'CAD',
-        min_delivery_date: '2013-04-12 14:48:45 -0400',
-        max_delivery_date: '2013-04-12 14:48:45 -0400',
       },
     ],
   }
@@ -216,7 +222,54 @@ app.post('/custom-shipping', function(req, res) {
       break
     case 'BC':
       findAddress(req.body.rate).then(result => {
-        if (result.orderTotal >= 1 && result.orderTotal < 10) {
+        if (result.prePurchasedCases === 0) {
+          data.rates[0].service_code = 'BC'
+          data.rates[0].description = `You have currently purchased ${
+            result.orderTotal
+          } bottles of your first case.`
+          data.rates[0].service_name = `Cellar Direct Customer Shipping - ${caseAmount(
+            result.orderTotal,
+          )} Case - {already paid or not}`
+
+          //TODO see if this can be refactored. check if the <= can be used for other case
+          shippingKey = caseAmount(result.orderTotal)
+          let shippingTotal = 0
+
+          // will add multiple keys together if customer is purchasing many cases of wine
+          for (
+            let index = result.prePurchasedCases;
+            index <= shippingKey;
+            index++
+          ) {
+            shippingTotal += shippingRates.bc[index]
+          }
+          data.rates[0].total_price = shippingTotal.toString()
+
+          res.json(data)
+        } else if (result.prePurchasedCases === 1) {
+          console.log('fudge')
+
+          //if the ammount prepurchased + the new ammount is the same the cost is 0.00
+          if (result.prePurchasedCases === caseAmount(result.orderTotal)) {
+            data.rates[0].total_price = shippingRates.bc[0]
+          } else {
+            //get the max key of shipping amounts.
+            shippingKey = caseAmount(result.orderTotal)
+            let shippingTotal = 0
+            console.log('else')
+
+            // will add multiple keys together if customer is purchasing many cases of wine
+            for (
+              let index = result.prePurchasedCases;
+              index < shippingKey;
+              index++
+            ) {
+              shippingTotal += shippingRates.bc[index]
+              console.log('wtf')
+            }
+            data.rates[0].total_price = shippingTotal.toString()
+          }
+          data.rates[0].service_code = 'BC'
           data.rates[0].description = `You have currently purchased ${
             result.orderTotal
           } bottles of your first case.`
@@ -291,7 +344,6 @@ function newCustomerOrder(body) {
 
   const { address1: address } = body.customer.default_address
 
-  
   // totals the amount of bottles purchased to insert or increment in the db
   let bottlesPurchased = 0
   body.line_items.map(item => {
