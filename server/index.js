@@ -168,12 +168,10 @@ async function findAddress(rate) {
   await rate.items.map(item => {
     //TODO test this and see if it works
     // if any item comes in with a quantitity of 12, it is substracted from it's total.
-    let quantity = 0
-    quantity += item.quantity
-    if (item.quantity > 12) {
-      quantity - 12
+    while (item.quantity >= 12) {
+      item.quantity = item.quantity - 12
     }
-    orderTotal += quantity
+    orderTotal += item.quantity
   })
   return await knex('customers')
     .select()
@@ -203,9 +201,26 @@ async function findAddress(rate) {
     })
 }
 
-const shippingRates = { bc: [00, 100, 200, 300, 400, 500] }
+const shippingRates = {
+  AB: [10000, 9000, 8000, 7000, 6000, 5000, 4000, 3000, 2000, 1000],
+  BC: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
+  MB: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
+  NB: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
+  NL: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
+  NT: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
+  NS: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
+  NU: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
+  ON: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
+  PE: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
+  QC: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
+  SK: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
+  YT: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
+}
 
 app.post('/custom-shipping', function(req, res) {
+  const { province } = req.body.rate.destination
+  console.log(province);
+  
   let data = {
     rates: [
       {
@@ -216,108 +231,63 @@ app.post('/custom-shipping', function(req, res) {
       },
     ],
   }
-  switch (req.body.rate.destination.province) {
-    case 'AB':
-      console.log('Province is: AB')
-      break
-    case 'BC':
-      findAddress(req.body.rate).then(result => {
-        if (result.prePurchasedCases === 0) {
-          data.rates[0].service_code = 'BC'
-          data.rates[0].description = `You have currently purchased ${
-            result.orderTotal
-          } bottles of your first case.`
-          data.rates[0].service_name = `Cellar Direct Customer Shipping - ${caseAmount(
-            result.orderTotal,
-          )} Case - {already paid or not}`
-
-          //TODO see if this can be refactored. check if the <= can be used for other case
-          shippingKey = caseAmount(result.orderTotal)
-          let shippingTotal = 0
-
-          // will add multiple keys together if customer is purchasing many cases of wine
-          for (
-            let index = result.prePurchasedCases;
-            index <= shippingKey;
-            index++
-          ) {
-            shippingTotal += shippingRates.bc[index]
-          }
-          data.rates[0].total_price = shippingTotal.toString()
-
-          res.json(data)
-        } else if (result.prePurchasedCases === 1) {
-          console.log('fudge')
-
-          //if the ammount prepurchased + the new ammount is the same the cost is 0.00
-          if (result.prePurchasedCases === caseAmount(result.orderTotal)) {
-            data.rates[0].total_price = shippingRates.bc[0]
-          } else {
-            //get the max key of shipping amounts.
-            shippingKey = caseAmount(result.orderTotal)
-            let shippingTotal = 0
-            console.log('else')
-
-            // will add multiple keys together if customer is purchasing many cases of wine
-            for (
-              let index = result.prePurchasedCases;
-              index < shippingKey;
-              index++
-            ) {
-              shippingTotal += shippingRates.bc[index]
-              console.log('wtf')
-            }
-            data.rates[0].total_price = shippingTotal.toString()
-          }
-          data.rates[0].service_code = 'BC'
-          data.rates[0].description = `You have currently purchased ${
-            result.orderTotal
-          } bottles of your first case.`
-          data.rates[0].service_name = `Cellar Direct Customer Shipping - ${caseAmount(
-            result.orderTotal,
-          )} Case - {already paid or not}`
-          res.json(data)
-        }
-      })
-
-      break
-    // return true
-    case 'MB':
-      console.log('Province is: MB')
-      break
-    case 'NB':
-      console.log('Province is: NB')
-      break
-    case 'NL':
-      console.log('Province is: NL')
-      break
-    case 'NT':
-      console.log('Province is: NT')
-      break
-    case 'NS':
-      console.log('Province is: NS')
-      break
-    case 'NU':
-      console.log('Province is: NU')
-      break
-    case 'ON':
-      console.log('Province is: ON')
-      break
-    case 'PE':
-      console.log('Province is: PE')
-      break
-    case 'QC':
-      console.log('Province is: QC')
-      break
-    case 'SK':
-      console.log('Province is: SK')
-      break
-    case 'YT':
-      console.log('Province is: YT')
-      break
-    default:
-      console.log('default')
+  function genericShippingInfo(
+    rates,
+    prePurchasedCases,
+    prePurchasedBottles,
+    orderTotal,
+  ) {
+    rates.service_code = province
+    rates.description = `You have previously paid for the shipping on ${
+      prePurchasedCases
+    } cases & bought ${prePurchasedBottles} bottles.`
+    rates.service_name = `Cellar Direct Tiered Shipping - ${caseAmount(
+      orderTotal,
+    )} Case Tier`
   }
+
+  function shippingCalculator(rates, orderTotal, prePurchasedCases) {
+    shippingKey = caseAmount(orderTotal)
+
+    let shippingTotal = 0
+
+    for (let index = prePurchasedCases; index < shippingKey; index++) {
+      shippingTotal += shippingRates[`${province}`][index]
+    }
+    rates.total_price = shippingTotal.toString()
+  }
+
+  findAddress(req.body.rate).then(result => {
+    const { prePurchasedCases, prePurchasedBottles, orderTotal } = result
+
+    if (result.prePurchasedCases === 0) {
+      genericShippingInfo(
+        data.rates[0],
+        prePurchasedCases,
+        prePurchasedBottles,
+        orderTotal,
+      )
+
+      //TODO see if this can be refactored. check if the <= can be used for other case
+      shippingCalculator(data.rates[0], orderTotal, prePurchasedCases)
+
+      res.json(data)
+    } else {
+      genericShippingInfo(
+        data.rates[0],
+        prePurchasedCases,
+        prePurchasedBottles,
+        orderTotal,
+      )
+      if (result.prePurchasedCases === caseAmount(result.orderTotal)) {
+        data.rates[0].total_price = '00'
+      } else {
+        //get the max key of shipping amounts.
+        shippingCalculator(data.rates[0], orderTotal, prePurchasedCases)
+      }
+      res.json(data)
+    }
+  })
 })
 
 // Create shopify middlewares and router
