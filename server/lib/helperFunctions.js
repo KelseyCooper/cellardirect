@@ -6,6 +6,8 @@ const ENV = process.env.ENV || 'development'
 const knexConfig = require('../knexfile')
 const knex = require('knex')(knexConfig[ENV])
 
+const { shippingRates } = require('./shippingRates')
+
 function caseAmount(num) {
   let number = Math.floor(num / 12) + 1
   if (num % 12 === 0) {
@@ -60,6 +62,9 @@ function newCustomerOrder(body) {
   // totals the amount of bottles purchased to insert or increment in the db
   let bottlesPurchased = 0
   body.line_items.map(item => {
+    while (item.quantity >= 12) {
+      item.quantity = item.quantity - 12
+    }
     bottlesPurchased += item.quantity
   })
 
@@ -92,6 +97,9 @@ function newCustomerOrder(body) {
           .then(id => {
             //use the id of the orders to create pruchased items
             body.line_items.map(item => {
+              while (item.quantity >= 12) {
+                item.quantity = item.quantity - 12
+              }
               return knex('purchased_items')
                 .insert({
                   product_name: item.title,
@@ -141,8 +149,37 @@ function newCustomerOrder(body) {
   return true
 }
 
+function genericShippingInfo(
+  rates,
+  prePurchasedCases,
+  prePurchasedBottles,
+  orderTotal,
+  province,
+) {
+  rates.service_code = province
+  rates.description = `You have previously paid for the shipping on ${
+    prePurchasedCases
+  } cases & bought ${prePurchasedBottles} bottles.`
+  rates.service_name = `Cellar Direct Tiered Shipping - ${caseAmount(
+    orderTotal,
+  )} Case Tier - ${orderTotal} Bottles`
+}
+
+function shippingCalculator(rates, orderTotal, prePurchasedCases, province) {
+  shippingKey = caseAmount(orderTotal)
+
+  let shippingTotal = 0
+
+  for (let index = prePurchasedCases; index < shippingKey; index++) {
+    shippingTotal += shippingRates[`${province}`][index]
+  }
+  rates.total_price = shippingTotal.toString()
+}
+
 module.exports = {
   caseAmount,
   findAddress,
   newCustomerOrder,
+  genericShippingInfo,
+  shippingCalculator,
 }

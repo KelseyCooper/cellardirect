@@ -4,6 +4,9 @@ require('dotenv').config()
 const fs = require('fs')
 const express = require('express')
 const bodyParser = require('body-parser')
+const bodyParserRaw = require( 'body-parser' ).raw({
+  type: '*/*',
+});
 const session = require('express-session')
 const RedisStore = require('connect-redis')(session)
 const path = require('path')
@@ -18,7 +21,16 @@ const ShopifyAPIClient = require('shopify-api-node')
 const ShopifyExpress = require('@shopify/shopify-express')
 const { MemoryStrategy } = require('@shopify/shopify-express/strategies')
 
-const { caseAmount, findAddress, newCustomerOrder } = require('./lib/helperFunctions')
+const crypto = require('crypto')
+
+const {
+  caseAmount,
+  findAddress,
+  newCustomerOrder,
+  genericShippingInfo,
+  shippingCalculator,
+} = require('./lib/helperFunctions')
+
 const { shippingRates } = require('./lib/shippingRates')
 
 const {
@@ -32,13 +44,12 @@ const shopifyConfig = {
   host: SHOPIFY_APP_HOST,
   apiKey: SHOPIFY_APP_KEY,
   secret: SHOPIFY_APP_SECRET,
-  scope: [
-    'write_orders, write_products, read_customers, write_customers, write_shipping',
-  ],
+  scope: ['write_orders, write_products, read_customers, write_shipping'],
   shopStore: new MemoryStrategy(),
   afterAuth(request, response) {
     const { session: { accessToken, shop } } = request
-
+    console.log(accessToken)
+    console.log('^token^')
     registerWebhook(shop, accessToken, {
       topic: 'orders/create',
       address: `${SHOPIFY_APP_HOST}/order-create`,
@@ -51,7 +62,7 @@ const shopifyConfig = {
       service_discovery: true,
       carrier_service_type: 'api',
       format: 'json',
-      callback_url: `https://${SHOPIFY_APP_HOST}/custom-shipping`,
+      callback_url: `${SHOPIFY_APP_HOST}/custom-shipping`,
     })
 
     return response.redirect('/')
@@ -102,12 +113,6 @@ const registerCarrierService = function(
 const app = express()
 const isDevelopment = NODE_ENV !== 'production'
 
-app.use(
-  bodyParser.json({
-    type: '*/*',
-  }),
-)
-
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 app.use(logger('dev'))
@@ -148,79 +153,6 @@ if (isDevelopment) {
 // Install
 app.get('/install', (req, res) => res.render('install'))
 
-app.post('/custom-shipping', function(req, res) {
-  const { province } = req.body.rate.destination
-  console.log(province);
-  
-  let data = {
-    rates: [
-      {
-        service_name: 'Cellar Direct Custom Shipping',
-        service_code: 'BC',
-        total_price: '1295',
-        currency: 'CAD',
-      },
-    ],
-  }
-  function genericShippingInfo(
-    rates,
-    prePurchasedCases,
-    prePurchasedBottles,
-    orderTotal,
-  ) {
-    rates.service_code = province
-    rates.description = `You have previously paid for the shipping on ${
-      prePurchasedCases
-    } cases & bought ${prePurchasedBottles} bottles.`
-    rates.service_name = `Cellar Direct Tiered Shipping - ${caseAmount(
-      orderTotal,
-    )} Case Tier`
-  }
-
-  function shippingCalculator(rates, orderTotal, prePurchasedCases) {
-    shippingKey = caseAmount(orderTotal)
-
-    let shippingTotal = 0
-
-    for (let index = prePurchasedCases; index < shippingKey; index++) {
-      shippingTotal += shippingRates[`${province}`][index]
-    }
-    rates.total_price = shippingTotal.toString()
-  }
-
-  findAddress(req.body.rate).then(result => {
-    const { prePurchasedCases, prePurchasedBottles, orderTotal } = result
-
-    if (result.prePurchasedCases === 0) {
-      genericShippingInfo(
-        data.rates[0],
-        prePurchasedCases,
-        prePurchasedBottles,
-        orderTotal,
-      )
-
-      //TODO see if this can be refactored. check if the <= can be used for other case
-      shippingCalculator(data.rates[0], orderTotal, prePurchasedCases)
-
-      res.json(data)
-    } else {
-      genericShippingInfo(
-        data.rates[0],
-        prePurchasedCases,
-        prePurchasedBottles,
-        orderTotal,
-      )
-      if (result.prePurchasedCases === caseAmount(result.orderTotal)) {
-        data.rates[0].total_price = '00'
-      } else {
-        //get the max key of shipping amounts.
-        shippingCalculator(data.rates[0], orderTotal, prePurchasedCases)
-      }
-      res.json(data)
-    }
-  })
-})
-
 // Create shopify middlewares and router
 const shopify = ShopifyExpress(shopifyConfig)
 
@@ -228,10 +160,13 @@ const shopify = ShopifyExpress(shopifyConfig)
 const { routes, middleware } = shopify
 const { withShop, withWebhook } = middleware
 
-app.use('/', routes)
+app.use('/shopify', routes)
 
 // Client
-app.get('/', withShop, function(request, response) {
+app.get('/', withShop({ authBaseUrl: '/shopify' }), function(
+  request,
+  response,
+) {
   const { session: { shop, accessToken } } = request
   response.render('app', {
     title: 'Shopify Node App',
@@ -241,10 +176,108 @@ app.get('/', withShop, function(request, response) {
 })
 
 
+function webhookHMACValidator( req, res, next ) {
+  const shopifyHmac = req.get( 'X-Shopify-Hmac-SHA256' );
 
-app.post('/order-create', function(req, res) {
-  newCustomerOrder(req.body)
-  res.sendStatus(200)
+  if ( ! shopifyHmac ) {
+    return res.status( 409 ).json({
+      error: 'Missing signature',
+    });
+  }
+
+  try {
+    var calculated = crypto
+      .createHmac( 'SHA256', SHOPIFY_APP_SECRET )
+      .update( req.body )
+      .digest();
+  } catch( e ) {
+    return res.status( 409 ).json({
+      error: 'Invalid signature',
+    });
+  }
+
+  var shopifyHmacBuffer = Buffer.from( shopifyHmac, 'base64' );
+
+  var hashEquals = false;
+
+  try {
+    hashEquals = crypto.timingSafeEqual( calculated, shopifyHmacBuffer )
+  } catch ( e ) {
+    hashEquals = false;
+  }
+
+  if ( hashEquals ) {
+    return next();
+  } else {
+    return res.status( 409 ).json({
+      error: 'Invalid signature',
+    });
+  }
+}
+
+app.post( '/order-create', bodyParserRaw, webhookHMACValidator, ( req, res, next ) => {
+
+  var decodedBodyString = req.body.toString('utf8');
+
+  const body = JSON.parse(decodedBodyString)
+  
+  newCustomerOrder(body);
+  
+  return res.status(200).json({ status: 'success' });
+});
+
+app.post('/custom-shipping', bodyParser.json(), function(req, res) {
+  const { province } = req.body.rate.destination
+  console.log(province)
+
+  let data = {
+    rates: [
+      {
+        service_name: 'Cellar Direct Custom Shipping',
+        currency: 'CAD',
+      },
+    ],
+  }
+
+  findAddress(req.body.rate).then(result => {
+    console.log(result)
+
+    const { prePurchasedCases, prePurchasedBottles, orderTotal } = result
+
+    if (result.prePurchasedCases === 0) {
+      genericShippingInfo(
+        data.rates[0],
+        prePurchasedCases,
+        prePurchasedBottles,
+        orderTotal,
+        province,
+      )
+
+      shippingCalculator(data.rates[0], orderTotal, prePurchasedCases, province)
+
+      res.json(data)
+    } else {
+      genericShippingInfo(
+        data.rates[0],
+        prePurchasedCases,
+        prePurchasedBottles,
+        orderTotal,
+        province,
+      )
+      if (result.prePurchasedCases === caseAmount(result.orderTotal)) {
+        data.rates[0].total_price = '00'
+      } else {
+        //get the max key of shipping amounts.
+        shippingCalculator(
+          data.rates[0],
+          orderTotal,
+          prePurchasedCases,
+          province,
+        )
+      }
+      res.json(data)
+    }
+  })
 })
 
 // Error Handlers
