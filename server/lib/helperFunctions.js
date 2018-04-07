@@ -162,7 +162,7 @@ function genericShippingInfo(
   } cases & bought ${prePurchasedBottles} bottles.`
   rates.service_name = `Cellar Direct Tiered Shipping - ${caseAmount(
     orderTotal,
-  )} Case Tier - ${orderTotal} Bottles`
+  )} Case Tier - ${orderTotal}/${(caseAmount(orderTotal) * 12)} Bottles`
 }
 
 function shippingCalculator(rates, orderTotal, prePurchasedCases, province) {
@@ -176,10 +176,16 @@ function shippingCalculator(rates, orderTotal, prePurchasedCases, province) {
   rates.total_price = shippingTotal.toString()
 }
 
+function getCustomerList() {
+  return knex('customers')
+  .returning('*')
+}
+
 module.exports = {
   caseAmount,
   findAddress,
   newCustomerOrder,
   genericShippingInfo,
   shippingCalculator,
+  getCustomerList,
 }

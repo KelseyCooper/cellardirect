@@ -29,6 +29,7 @@ const {
   newCustomerOrder,
   genericShippingInfo,
   shippingCalculator,
+  getCustomerList,
 } = require('./lib/helperFunctions')
 
 const { shippingRates } = require('./lib/shippingRates')
@@ -277,6 +278,14 @@ app.post('/custom-shipping', bodyParser.json(), function(req, res) {
       }
       res.json(data)
     }
+  })
+})
+
+app.get('/customer-list', function(req, res) {
+  getCustomerList().then((result) => {
+    console.log(result);
+    
+    res.status(200).json({ result });
   })
 })
 

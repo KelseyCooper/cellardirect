@@ -20,7 +20,9 @@ const initState = {
   requestInProgress: false,
   requestError: null,
   responseBody: '',
-  customers: {},
+  customers: {
+    result: []
+  },
 };
 
 function reducer(state = initState, action) {

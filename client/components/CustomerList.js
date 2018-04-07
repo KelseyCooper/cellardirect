@@ -1,30 +1,32 @@
 import React from 'react'
 
 const CustomerList = props => {
-  // console.log(props.customers);
   const { customers } = props
+  console.log(customers, ' customerlist');
 
   return (
-    <div>
+    <table>
       <thead>
         <tr>
+          <th>ID</th>
           <th>First Name</th>
           <th>Last Name</th>
-          <th>ID</th>
-          <th>Order Count</th>
+          <th>Address</th>
+          <th>Total Bottles Paid to be shipped</th>
         </tr>
       </thead>
       <tbody>
         {customers.map(customer => (
           <tr key={customer.id}>
+            <td> {customer.id} </td>
             <td> {customer.first_name} </td>
             <td> {customer.last_name} </td>
-            <td> {customer.id} </td>
-            <td> {customer.orders_count} </td>
+            <td> {customer.address} </td>
+            <td> {customer.bottles_purchased} </td>
           </tr>
         ))}
       </tbody>
-    </div>
+    </table>
   )
 }
 

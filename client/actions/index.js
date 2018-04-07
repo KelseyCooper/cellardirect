@@ -13,7 +13,7 @@ export function fetchCustomers() {
   return dispatch => {
     dispatch(requestStartAction())
 
-    return fetch(`/api/customers.json`, fetchOptions)
+    return fetch(`/customer-list`, fetchOptions)
       .then(response => response.json())
       .then(json => dispatch(requestCompleteCustomersAction(json)))
       .catch(error => {
