@@ -1,33 +1,94 @@
-import React from 'react'
+import React from 'react';
+import {
+  Card,
+  ResourceList,
+  TextStyle,
+  Avatar,
+  Button,
+  VisuallyHidden,
+  ExceptionList,
+  Truncate,
+} from '@shopify/polaris';
 
-const CustomerList = props => {
-  const { customers } = props
-  console.log(customers, ' customerlist');
+export default class CustomerList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedItems: [],
+    }
+  }
 
-  return (
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Address</th>
-          <th>Total Bottles Paid to be shipped</th>
-        </tr>
-      </thead>
-      <tbody>
-        {customers.map(customer => (
-          <tr key={customer.id}>
-            <td> {customer.id} </td>
-            <td> {customer.first_name} </td>
-            <td> {customer.last_name} </td>
-            <td> {customer.address} </td>
-            <td> {customer.bottles_purchased} </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  )
+  handleSelectionChange = (selectedItems) => {
+    this.setState({selectedItems});
+  }
+
+  renderItem = (item) => {
+    const {id, url, name, location} = item;
+    const media = <Avatar customer size="medium" name={name} />;
+
+    return (
+      <ResourceList.Item id={id} url={url} media={media} accessibilityLabel={`View details for ${name}`}>
+        <h3><TextStyle variation="strong">{name}</TextStyle></h3>
+        <div>{location}</div>
+      </ResourceList.Item>
+    );
+  }
+
+  render() {
+    const resourceName = {
+      singular: 'customer',
+      plural: 'customers',
+    };
+
+    const items = [
+      {
+        id: 341,
+        url: 'customers/341',
+        name: 'Mae Jemison',
+        location: 'Decatur, USA',
+      },
+      {
+        id: 256,
+        url: 'customers/256',
+        name: 'Ellen Ochoa',
+        location: 'Los Angeles, USA',
+      },
+    ];
+
+    const promotedBulkActions = [
+      {
+        content: 'Edit customers',
+        onAction: () => console.log('Todo: implement bulk edit'),
+      },
+    ];
+
+    const bulkActions = [
+      {
+        content: 'Add tags',
+        onAction: () => console.log('Todo: implement bulk add tags'),
+      },
+      {
+        content: 'Remove tags',
+        onAction: () => console.log('Todo: implement bulk remove tags'),
+      },
+      {
+        content: 'Delete customers',
+        onAction: () => console.log('Todo: implement bulk delete'),
+      }
+    ];
+
+    return (
+      <Card>
+        <ResourceList
+          resourceName={resourceName}
+          items={items}
+          renderItem={this.renderItem}
+          selectedItems={this.state.selectedItems}
+          onSelectionChange={this.handleSelectionChange}
+          promotedBulkActions={promotedBulkActions}
+          bulkActions={bulkActions}
+        />
+      </Card>
+    );
+  }
 }
-
-export default CustomerList

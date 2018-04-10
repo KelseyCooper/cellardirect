@@ -4,7 +4,7 @@ import {
   VisuallyHidden,
 } from '@shopify/polaris';
 
-// import './BasicListItem.css';
+import './BasicListItem.css';
 
 export default function BasicListItem(props) {
   const { title, secondaryContent, tertiaryContent, ...rest } = props;
@@ -12,6 +12,7 @@ export default function BasicListItem(props) {
   return (
     <div className="BasicListItem">
       <ResourceList.Item {...rest}>
+      hello
         <div className="BasicListItem__Content">
           <div className="BasicListItem__Start">
             <h3 className="BasicListItem__Title">
