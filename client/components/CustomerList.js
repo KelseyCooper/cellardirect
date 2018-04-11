@@ -10,85 +10,32 @@ import {
   Truncate,
 } from '@shopify/polaris';
 
-export default class CustomerList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedItems: [],
-    }
-  }
+const CustomerList = props => {
+  // console.log(props.customers);
+  const { customers } = props
 
-  handleSelectionChange = (selectedItems) => {
-    this.setState({selectedItems});
-  }
-
-  renderItem = (item) => {
-    const {id, url, name, location} = item;
-    const media = <Avatar customer size="medium" name={name} />;
-
-    return (
-      <ResourceList.Item id={id} url={url} media={media} accessibilityLabel={`View details for ${name}`}>
-        <h3><TextStyle variation="strong">{name}</TextStyle></h3>
-        <div>{location}</div>
-      </ResourceList.Item>
-    );
-  }
-
-  render() {
-    const resourceName = {
-      singular: 'customer',
-      plural: 'customers',
-    };
-
-    const items = [
-      {
-        id: 341,
-        url: 'customers/341',
-        name: 'Mae Jemison',
-        location: 'Decatur, USA',
-      },
-      {
-        id: 256,
-        url: 'customers/256',
-        name: 'Ellen Ochoa',
-        location: 'Los Angeles, USA',
-      },
-    ];
-
-    const promotedBulkActions = [
-      {
-        content: 'Edit customers',
-        onAction: () => console.log('Todo: implement bulk edit'),
-      },
-    ];
-
-    const bulkActions = [
-      {
-        content: 'Add tags',
-        onAction: () => console.log('Todo: implement bulk add tags'),
-      },
-      {
-        content: 'Remove tags',
-        onAction: () => console.log('Todo: implement bulk remove tags'),
-      },
-      {
-        content: 'Delete customers',
-        onAction: () => console.log('Todo: implement bulk delete'),
-      }
-    ];
-
-    return (
-      <Card>
-        <ResourceList
-          resourceName={resourceName}
-          items={items}
-          renderItem={this.renderItem}
-          selectedItems={this.state.selectedItems}
-          onSelectionChange={this.handleSelectionChange}
-          promotedBulkActions={promotedBulkActions}
-          bulkActions={bulkActions}
-        />
-      </Card>
-    );
-  }
+  return (
+    <div>
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>ID</th>
+          <th>Order Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        {customers.map(customer => (
+          <tr key={customer.id}>
+            <td> {customer.first_name} </td>
+            <td> {customer.last_name} </td>
+            <td> {customer.id} </td>
+            <td> {customer.orders_count} </td>
+          </tr>
+        ))}
+      </tbody>
+    </div>
+  )
 }
+
+export default CustomerList

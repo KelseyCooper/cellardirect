@@ -22,6 +22,17 @@ export function fetchCustomers() {
   }
 }
 
+
+export function deleteCustomers(data) {
+  console.log(data, 'data');
+  return {
+    type: 'UPDATE_SELECTED_ITEMS',
+    payload: {
+      //TODO FINISH THIS IN THE STORE / REDUCER
+    },
+  } 
+}
+
 export function updateVerb(verb) {
   return {
     type: 'UPDATE_VERB',

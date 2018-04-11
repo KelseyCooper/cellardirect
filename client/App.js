@@ -1,27 +1,40 @@
-import React, { Component} from 'react';
-import { Page } from '@shopify/polaris';
-import { EmbeddedApp } from '@shopify/polaris/embedded';
+import React, { Component } from 'react'
+import { Page, Provider } from '@shopify/polaris'
 
 import ApiConsole from './components/ApiConsole'
 import Customers from './containers/Customers'
 
 class App extends Component {
   render() {
-    const { apiKey, shopOrigin } = window;
+    const { apiKey, shopOrigin } = window
+    const CustomLinkComponent = ({ children, url, ...rest }) => {
+      return (
+        <a
+          {...rest}
+        >
+          {children}
+        </a>
+      )
+    }
 
     return (
-      <EmbeddedApp shopOrigin={shopOrigin} apiKey={apiKey}>
+      <Provider
+        shopOrigin={shopOrigin}
+        apiKey={apiKey}
+        linkComponent={CustomLinkComponent}
+      >
         <Page
-          title="My application"
-          breadcrumbs={[{ content: 'Home', url: '/foo' }]}
-          primaryAction={{ content: 'Add something' }}
+          title="Cellar Direct Custom Shipping"
+          secondaryActions={[
+            { content: 'Customers', url: '#' },
+            { content: 'Shipping Rates', url: '#' },
+          ]}
         >
-          <ApiConsole />
           <Customers />
         </Page>
-      </EmbeddedApp>
-    );
+      </Provider>
+    )
   }
 }
 
-export default App;
+export default App

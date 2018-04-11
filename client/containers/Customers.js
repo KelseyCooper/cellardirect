@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import CustomersComponent from '../components/Customers'
-import { fetchCustomers } from '../actions'
+import { fetchCustomers, deleteCustomers } from '../actions'
 
 const mapStateToProps = state => {
   return {
@@ -13,6 +13,12 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     fetchCustomers: () => {
       dispatch(fetchCustomers())
     },
+    deleteCustomers: (data) => {
+      dispatch(deleteCustomers(data))
+    },
+    handleSelectionChangeState: (items) => {
+      dispatch(handleSelectionChangeState(items))
+    }
   }
 }
 

@@ -15,9 +15,9 @@
     lodash "^4.17.4"
     lodash-decorators "^4.3.5"
 
-"@shopify/polaris@^1.13.1":
-  version "1.13.1"
-  resolved "https://registry.yarnpkg.com/@shopify/polaris/-/polaris-1.13.1.tgz#af01177481c754ef02629fbe1c2429f09db374d7"
+"@shopify/polaris@2.0.0-beta.9":
+  version "2.0.0-beta.9"
+  resolved "https://registry.yarnpkg.com/@shopify/polaris/-/polaris-2.0.0-beta.9.tgz#30bd5cea416fe0aabf25fcade43706abc4455e04"
   dependencies:
     "@shopify/images" "^1.1.0"
     "@shopify/javascript-utilities" "^2.1.0"
@@ -28,7 +28,7 @@
     "@types/react-transition-group" "^2.0.6"
     babel-runtime "^6.23.0"
     core-js "^2.5.1"
-    hoist-non-react-statics "^2.3.1"
+    hoist-non-react-statics "^2.5.0"
     lodash "^4.17.4"
     prop-types "^15.6.0"
     react-transition-group "^2.2.1"
@@ -3004,7 +3004,7 @@ hoek@2.x.x:
   version "2.16.3"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-2.16.3.tgz#20bb7403d3cea398e91dc4710a8ff1b8274a25ed"
 
-hoist-non-react-statics@^2.3.1, hoist-non-react-statics@^2.5.0:
+hoist-non-react-statics@^2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.5.0.tgz#d2ca2dfc19c5a91c5a6615ce8e564ef0347e2a40"
 

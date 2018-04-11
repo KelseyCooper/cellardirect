@@ -11,14 +11,13 @@ import {
   Avatar,
 } from '@shopify/polaris'
 
-import BasicListItem from './BasicListItem'
-
 class CustomersComponent extends Component {
   constructor(props) {
     super(props)
     this.state = {
       selectedItems: [],
     }
+    this.handleSelectionChange = this.handleSelectionChange.bind(this)
   }
 
   componentDidMount() {
@@ -27,23 +26,40 @@ class CustomersComponent extends Component {
 
   handleSelectionChange = selectedItems => {
     this.setState({ selectedItems })
+
   }
 
+  deleteCustomersEvent = (e) => {
+    console.log('fudge');
+    
+    this.props.deleteCustomers(this.state.selectedItems)
+  }
+
+
   renderItem = item => {
-    const { id, url, name, location } = item
+    const { first_name, last_name, address, id, bottles_purchased } = item
     const media = <Avatar customer size="medium" name={name} />
 
     return (
-      <ResourceList.Item {...item}
+      <ResourceList.Item
+        {...item}
         id={id}
-        url={url}
-        media={media}
         accessibilityLabel={`View details for ${name}`}
       >
         <h3>
-          <TextStyle variation="strong">{name}</TextStyle>
+          <TextStyle variation="strong">
+            {first_name} {last_name}
+          </TextStyle>
+          <TextStyle variation="subdued">
+            {' '}
+            Total bottles paid to be shipped:{' '}
+          </TextStyle>
+          <TextStyle variation="strong">{bottles_purchased}</TextStyle>
         </h3>
-        <div>{location}</div>
+        <div>
+          {address}
+          <TextStyle variation="subdued">, Province</TextStyle>
+        </div>
       </ResourceList.Item>
     )
   }
@@ -51,7 +67,6 @@ class CustomersComponent extends Component {
   render() {
     const { customers } = this.props
     let customerList = customers || []
-    // console.log(customerList);
 
     /////////
 
@@ -60,40 +75,10 @@ class CustomersComponent extends Component {
       plural: 'customers',
     }
 
-    const items = [
-      {
-        id: 341,
-        url: 'customers/341',
-        name: 'Mae Jemison',
-        location: 'Decatur, USA',
-      },
-      {
-        id: 256,
-        url: 'customers/256',
-        name: 'Ellen Ochoa',
-        location: 'Los Angeles, USA',
-      },
-    ]
-
     const promotedBulkActions = [
       {
-        content: 'Edit customers',
-        onAction: () => console.log('Todo: implement bulk edit'),
-      },
-    ]
-
-    const bulkActions = [
-      {
-        content: 'Add tags',
-        onAction: () => console.log('Todo: implement bulk add tags'),
-      },
-      {
-        content: 'Remove tags',
-        onAction: () => console.log('Todo: implement bulk remove tags'),
-      },
-      {
-        content: 'Delete customers',
-        onAction: () => console.log('Todo: implement bulk delete'),
+        content: 'Delete Customers ',
+        onAction: () => this.deleteCustomersEvent(),
       },
     ]
 
@@ -101,105 +86,53 @@ class CustomersComponent extends Component {
 
     return (
       <div>
-        <CustomerList customers={customerList} />
-
         <Card>
           <ResourceList
             resourceName={resourceName}
-            items={items}
+            items={customerList}
             renderItem={this.renderItem}
             selectedItems={this.state.selectedItems}
             onSelectionChange={this.handleSelectionChange}
             promotedBulkActions={promotedBulkActions}
-            bulkActions={bulkActions}
-          />
-        </Card>
-
-        <Card>
-          <ResourceList
-            resourceName={{ singular: 'customer', plural: 'customers' }}
-            items={[
-              {
-                attributeOne: 341,
-                attributeTwo: 'customers/341',
-                attributeThree: 'Mae Jemison',
-                location: 'Decatur, USA',
-              },
-              {
-                id: 256,
-                url: 'customers/256',
-                name: 'Ellen Ochoa',
-                location: 'Los Angeles, USA',
-              },
-            ]}
-            renderItem={item => {
-              const { id, url, name, location } = item
-              const media = <Avatar customer size="medium" name={name} />
-
-              return <ResourceList.Item {...item} media={media} />
-            }}
-          />
-        </Card>
-
-        <Card title="Blog posts">
-          <ResourceList
-            resourceName={{ singular: 'post', plural: 'posts' }}
-            items={[
-              {
-                attributeOne: 'How to Get Value from Wireframes',
-                attributeTwo: 'by Jonathan Mangrove',
-                attributeThree: 'Today, 7:14pm',
-              },
-              {
-                title: 'The Best Design Systems of 2017',
-                secondaryContent: 'by Stephanie Xie',
-                tertiaryContent: 'Dec 28, 2017, 4:21pm',
-              },
-            ]}
-            renderItem={this.renderItem}
-          />
-        </Card>
-
-        <Card>
-          <ResourceList
-            items={[
-              {
-                url: '#',
-                attributeOne: 'How to Get Value from Wireframes',
-                attributeTwo: 'by Jonathan Mangrove',
-                attributeThree: (
-                  <TextStyle variation="subdued">Today, 7:14pm</TextStyle>
-                ),
-              },
-              {
-                url: '#',
-                attributeOne: 'Test blog post',
-                attributeTwo: 'by Jonathan Mangrove',
-                attributeThree: (
-                  <TextStyle variation="subdued">
-                    Jan 14, 2016, 8:24am
-                  </TextStyle>
-                ),
-                badges: [{ content: 'Hidden' }],
-              },
-            ]}
-            renderItem={this.renderItem}
+            filterControl={
+              <ResourceList.FilterControl
+                resourceName={{ singular: 'customer', plural: 'customers' }}
+                filters={[
+                  {
+                    key: 'accountStatusFilter',
+                    label: 'Province',
+                    operatorText: 'is',
+                    type: FilterType.Select,
+                    options: [
+                      'AB',
+                      'BC',
+                      'MB',
+                      'NB',
+                      'NL',
+                      'NT',
+                      'NS',
+                      'NU',
+                      'ON',
+                      'PE',
+                      'QC',
+                      'YT',
+                    ]
+                  },
+                ]}
+               
+                onFiltersChange={(appliedFilters) => {
+                  console.log(
+                    `Applied filters changed to ${appliedFilters}.`,
+                    'Todo: use setState to apply this change.'
+                  );
+                }}
+              />
+            }
           />
         </Card>
       </div>
     )
   }
-
-  // renderItem = (item, index) => {
-  //   return (
-  //     <div>
-  //       lol
-  //       <ResourceList.Item key={index} {...item}>
-  //         fudge
-  //       </ResourceList.Item>
-  //     </div>
-  //   )
-  // }
 }
 
 export default CustomersComponent
