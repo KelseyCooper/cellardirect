@@ -287,17 +287,16 @@ app.get('/customer-list', function(req, res) {
   //TODO write error handing, catch.
   getCustomerList().then((result) => {
     console.log(result);
-    
     res.status(200).json({ result });
   })
 })
 
 app.post('/delete-customers', bodyParser.json(), function(req, res) {
-  deleteCustomers(req.body.data).then((result) => {
+  
+  //TODO write error handling, also authenticate header?
+  deleteCustomers(req.body.data).then(() => {
     res.status(200).json({ "success": true });
   })
-  
-  // res.status(200).json({ "success": true });
 })
 
 // Error Handlers

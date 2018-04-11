@@ -57,8 +57,11 @@ async function findAddress(rate) {
 function newCustomerOrder(body) {
   const { email, first_name: firstName, last_name: lastName } = body.customer
 
-  const { address1: address, province_code: province } = body.customer.default_address
-  
+  const {
+    address1: address,
+    province_code: province,
+  } = body.customer.default_address
+
   // totals the amount of bottles purchased to insert or increment in the db
   let bottlesPurchased = 0
   body.line_items.map(item => {
@@ -163,7 +166,7 @@ function genericShippingInfo(
   } cases & bought ${prePurchasedBottles} bottles.`
   rates.service_name = `Cellar Direct Tiered Shipping - ${caseAmount(
     orderTotal,
-  )} Case Tier - ${orderTotal}/${(caseAmount(orderTotal) * 12)} Bottles`
+  )} Case Tier - ${orderTotal}/${caseAmount(orderTotal) * 12} Bottles`
 }
 
 function shippingCalculator(rates, orderTotal, prePurchasedCases, province) {
@@ -178,18 +181,45 @@ function shippingCalculator(rates, orderTotal, prePurchasedCases, province) {
 }
 
 function getCustomerList() {
-  return knex('customers')
-  .returning('*')
+  return knex('customers').returning('*')
 }
 
-function deleteCustomers(ids) {
-  ids.map(id => {
-    return knex('customers')
-    .where('id', id)
-    .del()
-  }).then(() => {
+async function deleteCustomers(ids) {
+  
+  await ids.map(id => {
+
+    return knex('orders')
+      .where('customer_id', id)
+      .then(result => {
+
+        result.map(item => {
+
+          return knex('purchased_items')
+            .where('order_id', item.id)
+            .del()
+            .then(result => {
+              return true
+            })
+        })
+        return true
+      })
+      .then(() => {
+        return knex('orders')
+          .where('customer_id', id)
+          .del()
+          .then(() => {
+            return true
+          })
+      })
+      .then(() => {
+        return knex('customers')
+          .where('id', id)
+          .del()
+        return true
+      })
     return true
   })
+  return true
 }
 
 module.exports = {
