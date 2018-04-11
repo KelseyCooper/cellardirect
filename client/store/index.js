@@ -16,6 +16,7 @@ const requestFields = {
 };
 
 const initState = {
+  selectedItems: [],
   requestFields,
   requestInProgress: false,
   requestError: null,
@@ -27,6 +28,11 @@ const initState = {
 
 function reducer(state = initState, action) {
   switch (action.type) {
+    case 'UPDATE_SELECTED_ITEMS':
+    return {
+      ...state,
+      selectedItems: action.payload.items,
+    }
     case 'UPDATE_VERB':
       return {
         ...state,

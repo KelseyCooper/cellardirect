@@ -1,10 +1,11 @@
 import { connect } from 'react-redux'
 import CustomersComponent from '../components/Customers'
-import { fetchCustomers, deleteCustomers } from '../actions'
+import { fetchCustomers, deleteCustomers, handleSelectionChangeState } from '../actions'
 
 const mapStateToProps = state => {
   return {
     customers: state.customers.result,
+    selectedItems: state.selectedItems,
   }
 }
 

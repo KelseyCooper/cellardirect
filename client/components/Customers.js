@@ -12,27 +12,19 @@ import {
 } from '@shopify/polaris'
 
 class CustomersComponent extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      selectedItems: [],
-    }
-    this.handleSelectionChange = this.handleSelectionChange.bind(this)
-  }
 
   componentDidMount() {
     this.props.fetchCustomers()
   }
 
   handleSelectionChange = selectedItems => {
-    this.setState({ selectedItems })
-
+    this.props.handleSelectionChangeState( selectedItems )
   }
 
   deleteCustomersEvent = (e) => {
     console.log('fudge');
     
-    this.props.deleteCustomers(this.state.selectedItems)
+    this.props.deleteCustomers(this.props.selectedItems)
   }
 
 
@@ -91,7 +83,7 @@ class CustomersComponent extends Component {
             resourceName={resourceName}
             items={customerList}
             renderItem={this.renderItem}
-            selectedItems={this.state.selectedItems}
+            selectedItems={this.props.selectedItems}
             onSelectionChange={this.handleSelectionChange}
             promotedBulkActions={promotedBulkActions}
             filterControl={

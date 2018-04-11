@@ -25,10 +25,21 @@ export function fetchCustomers() {
 
 export function deleteCustomers(data) {
   console.log(data, 'data');
+
+  //TODO finish this reducer
+  return {
+    type: 'DELETE_CUSTOMER',
+    payload: {
+      data
+    },
+  } 
+}
+
+export function handleSelectionChangeState(items) {
   return {
     type: 'UPDATE_SELECTED_ITEMS',
     payload: {
-      //TODO FINISH THIS IN THE STORE / REDUCER
+      items
     },
   } 
 }
