@@ -6,6 +6,7 @@ exports.up = function(knex, Promise) {
         table.string('last_name')
         table.string('address').unique()
         table.string('email')
+        table.string('province')
         table.integer('bottles_purchased')
       }),
   

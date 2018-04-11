@@ -26,7 +26,7 @@ class CustomersComponent extends Component {
 
 
   renderItem = item => {
-    const { first_name, last_name, address, id, bottles_purchased } = item
+    const { first_name, last_name, address, id, bottles_purchased, province } = item
     const media = <Avatar customer size="medium" name={name} />
 
     return (
@@ -47,7 +47,7 @@ class CustomersComponent extends Component {
         </h3>
         <div>
           {address}
-          <TextStyle variation="subdued">, Province</TextStyle>
+          <TextStyle variation="subdued">, {province}</TextStyle>
         </div>
       </ResourceList.Item>
     )

@@ -30,6 +30,7 @@ const {
   genericShippingInfo,
   shippingCalculator,
   getCustomerList,
+  deleteCustomers,
 } = require('./lib/helperFunctions')
 
 const { shippingRates } = require('./lib/shippingRates')
@@ -282,6 +283,8 @@ app.post('/custom-shipping', bodyParser.json(), function(req, res) {
 })
 
 app.get('/customer-list', function(req, res) {
+
+  //TODO write error handing, catch.
   getCustomerList().then((result) => {
     console.log(result);
     
@@ -290,9 +293,11 @@ app.get('/customer-list', function(req, res) {
 })
 
 app.post('/delete-customers', bodyParser.json(), function(req, res) {
-  console.log(req.body);
+  deleteCustomers(req.body.data).then((result) => {
+    res.status(200).json({ "success": true });
+  })
   
-  res.status(200).json({ "success": true });
+  // res.status(200).json({ "success": true });
 })
 
 // Error Handlers

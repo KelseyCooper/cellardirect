@@ -34,14 +34,11 @@ function reducer(state = initState, action) {
           customers: action.payload.response
         };
     case 'DELETE_CUSTOMERS_COMPLETE':
-    console.log('in the reducer payload ', action.payload.data );
-
-    
-    
         return {
           ...state,
           requestInProgress: false,
           requestError: null,
+          selectedItems: [],
           customers: {
             result: [
               ...state.customers.result.filter(item => !action.payload.data.includes(item.id))

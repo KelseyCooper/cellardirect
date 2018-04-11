@@ -57,8 +57,8 @@ async function findAddress(rate) {
 function newCustomerOrder(body) {
   const { email, first_name: firstName, last_name: lastName } = body.customer
 
-  const { address1: address } = body.customer.default_address
-
+  const { address1: address, province_code: province } = body.customer.default_address
+  
   // totals the amount of bottles purchased to insert or increment in the db
   let bottlesPurchased = 0
   body.line_items.map(item => {
@@ -83,6 +83,7 @@ function newCustomerOrder(body) {
             last_name: lastName,
             email,
             address,
+            province,
             bottles_purchased: bottlesPurchased,
           })
           .returning('id')
@@ -181,6 +182,16 @@ function getCustomerList() {
   .returning('*')
 }
 
+function deleteCustomers(ids) {
+  ids.map(id => {
+    return knex('customers')
+    .where('id', id)
+    .del()
+  }).then(() => {
+    return true
+  })
+}
+
 module.exports = {
   caseAmount,
   findAddress,
@@ -188,4 +199,5 @@ module.exports = {
   genericShippingInfo,
   shippingCalculator,
   getCustomerList,
+  deleteCustomers,
 }
