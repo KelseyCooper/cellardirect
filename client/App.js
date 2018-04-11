@@ -7,13 +7,7 @@ class App extends Component {
   render() {
     const { apiKey, shopOrigin } = window
     const CustomLinkComponent = ({ children, url, ...rest }) => {
-      return (
-        <a
-          {...rest}
-        >
-          {children}
-        </a>
-      )
+      return <a {...rest}>{children}</a>
     }
 
     return (

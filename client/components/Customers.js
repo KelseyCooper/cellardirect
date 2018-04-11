@@ -21,8 +21,6 @@ class CustomersComponent extends Component {
   }
 
   deleteCustomersEvent = (e) => {
-    console.log('fudge');
-    
     this.props.deleteCustomers(this.props.selectedItems)
   }
 

@@ -2,19 +2,6 @@ import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import logger from 'redux-logger';
 
-const requestFields = {
-  verb: 'POST',
-  path: '/products.json',
-  params: JSON.stringify({
-    product: {
-      title: "Burton Custom Freestyle 151",
-      body_html: "<strong>Good snowboard!<\/strong>",
-      vendor: "Burton",
-      product_type: "Snowboard"
-    }
-  }, null, 2)
-};
-
 const initState = {
   selectedItems: [],
   requestInProgress: false,
@@ -46,6 +33,21 @@ function reducer(state = initState, action) {
           requestError: null,
           customers: action.payload.response
         };
+    case 'DELETE_CUSTOMERS_COMPLETE':
+    console.log('in the reducer payload ', action.payload.data );
+
+    
+    
+        return {
+          ...state,
+          requestInProgress: false,
+          requestError: null,
+          customers: {
+            result: [
+              ...state.customers.result.filter(item => !action.payload.data.includes(item.id))
+            ]
+          }
+        }
     case 'REQUEST_ERROR':
       return {
         ...state,

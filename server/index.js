@@ -289,6 +289,12 @@ app.get('/customer-list', function(req, res) {
   })
 })
 
+app.post('/delete-customers', bodyParser.json(), function(req, res) {
+  console.log(req.body);
+  
+  res.status(200).json({ "success": true });
+})
+
 // Error Handlers
 app.use(function(req, res, next) {
   const err = new Error('Not Found')

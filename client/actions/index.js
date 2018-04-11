@@ -33,11 +33,35 @@ export function fetchCustomers() {
 // }
 
 export function deleteCustomers(data) {
-  console.log(data, 'data');
+
+  const ids = { data }
+  
+  const bodyData = JSON.stringify(ids)
+  
+  
+  const options = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: bodyData
+  }
+
+  return dispatch => {
+    dispatch(requestStartAction())
+
+    return fetch(`/delete-customers`, options)
+      .then(response => dispatch(requestCompleteDeleteCustomersAction(data)))
+      .catch(error => {
+        dispatch(requestErrorAction(error))
+      })
+  }
 
   //TODO finish this reducer
   return {
-    type: 'DELETE_CUSTOMER',
+    type: 'DELETE_CUSTOMERS',
     payload: {
       data
     },
@@ -68,6 +92,17 @@ function requestCompleteCustomersAction(response) {
     type: 'REQUEST_CUSTOMERS_COMPLETE',
     payload: {
       response,
+    },
+  }
+}
+
+function requestCompleteDeleteCustomersAction(data) {
+console.log(data, ' is the payload');
+
+  return {
+    type: 'DELETE_CUSTOMERS_COMPLETE',
+    payload: {
+      data,
     },
   }
 }
