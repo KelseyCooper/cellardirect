@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Page, Provider } from '@shopify/polaris'
 
-import ApiConsole from './components/ApiConsole'
 import Customers from './containers/Customers'
 
 class App extends Component {

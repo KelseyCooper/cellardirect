@@ -17,7 +17,6 @@ const requestFields = {
 
 const initState = {
   selectedItems: [],
-  requestFields,
   requestInProgress: false,
   requestError: null,
   responseBody: '',
@@ -33,46 +32,12 @@ function reducer(state = initState, action) {
       ...state,
       selectedItems: action.payload.items,
     }
-    case 'UPDATE_VERB':
-      return {
-        ...state,
-        responseBody: '',
-        requestFields: {
-          ...state.requestFields,
-          verb: action.payload.verb,
-        },
-      };
-    case 'UPDATE_PATH':
-      return {
-        ...state,
-        responseBody: '',
-        requestFields: {
-          ...state.requestFields,
-          path: action.payload.path,
-        },
-      };
-    case 'UPDATE_PARAMS':
-      return {
-        ...state,
-        responseBody: '',
-        requestFields: {
-          ...state.requestFields,
-          params: action.payload.params,
-        },
-      };
     case 'REQUEST_START':
       return {
         ...state,
         requestInProgress: true,
         requestError: null,
         responseBody: ''
-      };
-      case 'REQUEST_COMPLETE':
-      return {
-        ...state,
-        requestInProgress: false,
-        requestError: null,
-        responseBody: action.payload.responseBody
       };
       case 'REQUEST_CUSTOMERS_COMPLETE':
         return {

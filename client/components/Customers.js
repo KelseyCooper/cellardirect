@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import CustomerList from './CustomerList'
 import {
   Page,
   Card,
@@ -58,7 +57,7 @@ class CustomersComponent extends Component {
 
   render() {
     const { customers } = this.props
-    let customerList = customers || []
+    // let customerList = customers || []
 
     /////////
 
@@ -81,7 +80,7 @@ class CustomersComponent extends Component {
         <Card>
           <ResourceList
             resourceName={resourceName}
-            items={customerList}
+            items={customers}
             renderItem={this.renderItem}
             selectedItems={this.props.selectedItems}
             onSelectionChange={this.handleSelectionChange}
