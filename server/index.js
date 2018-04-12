@@ -33,7 +33,7 @@ const {
   deleteCustomers,
   isEmpty,
   getCustomerListWithSearch,
-  search
+  search,
 } = require('./lib/helperFunctions')
 
 const { shippingRates } = require('./lib/shippingRates')
@@ -180,6 +180,7 @@ app.get('/', withShop({ authBaseUrl: '/shopify' }), function(
   })
 })
 
+// Validates HMAC from shopify for webhooks
 function webhookHMACValidator(req, res, next) {
   const shopifyHmac = req.get('X-Shopify-Hmac-SHA256')
 
@@ -219,6 +220,7 @@ function webhookHMACValidator(req, res, next) {
   }
 }
 
+// Webhook to add a customer when they make a purchase
 app.post(
   '/order-create',
   bodyParserRaw,
@@ -234,9 +236,9 @@ app.post(
   },
 )
 
+// Endpoint for the client to get the shipping amounts for the customer
 app.post('/custom-shipping', bodyParser.json(), function(req, res) {
   const { province } = req.body.rate.destination
-  console.log(province)
 
   let data = {
     rates: [
@@ -248,10 +250,7 @@ app.post('/custom-shipping', bodyParser.json(), function(req, res) {
   }
 
   findAddress(req.body.rate).then((result) => {
-    console.log(result)
-
     const { prePurchasedCases, prePurchasedBottles, orderTotal } = result
-
     if (result.prePurchasedCases === 0) {
       genericShippingInfo(
         data.rates[0],
@@ -288,11 +287,9 @@ app.post('/custom-shipping', bodyParser.json(), function(req, res) {
   })
 })
 
-
+// Gets the customer list to display in the shopify store, also handles filtering
 app.post('/customer-list', bodyParser.json(), function(req, res) {
-  console.log('the server side req.body is ', req.body)
-  //TODO write error handing, catch.
-
+  //TODO write error handling, catch.
   if (!isEmpty(req.body)) {
     const provinceFilter = req.body.filter((item) => {
       if (item.key === 'accountStatusFilter') {
@@ -309,16 +306,20 @@ app.post('/customer-list', bodyParser.json(), function(req, res) {
     getCustomerList(provinceFilter).then((result) => {
       if (!isEmpty(searchFilter)) {
         getCustomerListWithSearch(searchFilter, result).then((searchResult) => {
-          const result = []
+          let result = []
+
           if (searchResult[0].length > 0) {
-            searchResult.map((item) => {
-              console.log(item, ' i am the item inside of the searchResult.map');
-              if(item.length > 0) {
-                result.push(item[0])
+            for (let i = 0; i < searchResult.length; i++) {
+              if (searchResult[i].length === 0) {
+                result = []
               }
-            })
+              searchResult[i].map((item) => {
+                result.push(item)
+              })
+            }
           }
-          console.log(result, ' search filter after the search')
+          console.log(result)
+
           res.status(200).json({ result })
         })
       } else {
@@ -332,6 +333,7 @@ app.post('/customer-list', bodyParser.json(), function(req, res) {
   }
 })
 
+// Deletes a range of customers by their ids
 app.post('/delete-customers', bodyParser.json(), function(req, res) {
   //TODO write error handling, also authenticate header?
   deleteCustomers(req.body.data).then(() => {

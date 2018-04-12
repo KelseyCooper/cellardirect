@@ -8,6 +8,7 @@ const knex = require('knex')(knexConfig[ENV])
 
 const { shippingRates } = require('./shippingRates')
 
+// Totals the case amount purchased, 12 = 1, 13 = 2.
 function caseAmount(num) {
   let number = Math.floor(num / 12) + 1
   if (num % 12 === 0) {
@@ -16,6 +17,7 @@ function caseAmount(num) {
   return number
 }
 
+// finds address in the db
 async function findAddress(rate) {
   const { address1: address } = rate.destination
   const data = {}
@@ -54,6 +56,7 @@ async function findAddress(rate) {
     })
 }
 
+// Creates new customer, order, and purchased_items in the db
 function newCustomerOrder(body) {
   const { email, first_name: firstName, last_name: lastName } = body.customer
 
@@ -153,6 +156,7 @@ function newCustomerOrder(body) {
   return true
 }
 
+// info that is sent back to the customer about their shipping
 function genericShippingInfo(
   rates,
   prePurchasedCases,
@@ -167,6 +171,7 @@ function genericShippingInfo(
   )} Case Tier - ${orderTotal}/${caseAmount(orderTotal) * 12} Bottles`
 }
 
+// Calculates shipping amount
 function shippingCalculator(rates, orderTotal, prePurchasedCases, province) {
   shippingKey = caseAmount(orderTotal)
 
@@ -178,6 +183,7 @@ function shippingCalculator(rates, orderTotal, prePurchasedCases, province) {
   rates.total_price = shippingTotal.toString()
 }
 
+// Checks if an object is empty
 function isEmpty(obj) {
   for (var key in obj) {
     if (obj.hasOwnProperty(key)) return false
@@ -185,15 +191,11 @@ function isEmpty(obj) {
   return true
 }
 
-function mapFilters(filters){
-  
-}
-
+// Gets customers list and deals with province filters
 async function getCustomerList(filters) {
   let customers = []
   
   if (isEmpty(filters)) {
-    console.log('no filters')
     return knex('customers').returning('*')
   } else {
     let customers = []
@@ -210,6 +212,7 @@ async function getCustomerList(filters) {
   }
 }
 
+// deletes customer, orders, and purchased_items from the db
 async function deleteCustomers(ids) {
   await ids.map((id) => {
     return knex('orders')
@@ -244,8 +247,8 @@ async function deleteCustomers(ids) {
   return true
 }
 
+// Search within an object for a key value
 function search(nameKey, myArray) {
-  console.log(nameKey, myArray, '    these are the params in search')
   let returnArray = []
 
   for (var i = 0; i < myArray.length; i++) {
@@ -262,6 +265,7 @@ function search(nameKey, myArray) {
   return returnArray
 }
 
+// Returns customer list after search
 async function getCustomerListWithSearch(searchFilter, result) {
   let searchResult = []
   await Promise.all(
@@ -270,8 +274,6 @@ async function getCustomerListWithSearch(searchFilter, result) {
       await searchResult.push(resultObject)
     }),
   )
-  console.log(searchResult, ' search result after searchfilter')
-
   return await searchResult
 }
 
