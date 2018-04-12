@@ -11,22 +11,38 @@ import {
 } from '@shopify/polaris'
 
 class CustomersComponent extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      appliedFilters: [],
+    }
+    this.handleFiltersChange = this.handleFiltersChange.bind(this);
+  }
 
   componentDidMount() {
     this.props.fetchCustomers()
   }
 
-  handleSelectionChange = selectedItems => {
-    this.props.handleSelectionChangeState( selectedItems )
+  handleSelectionChange = (selectedItems) => {
+    this.props.handleSelectionChangeState(selectedItems)
   }
 
   deleteCustomersEvent = (e) => {
     this.props.deleteCustomers(this.props.selectedItems)
   }
 
+  renderItem = (item) => {
+    const {
+      first_name,
+      last_name,
+      address,
+      id,
+      bottles_purchased,
+      province,
+    } = item
 
-  renderItem = item => {
-    const { first_name, last_name, address, id, bottles_purchased, province } = item
+    
     const media = <Avatar customer size="medium" name={name} />
 
     return (
@@ -59,6 +75,9 @@ class CustomersComponent extends Component {
 
     /////////
 
+    const { appliedFilters } = this.state
+    /////////////
+
     const resourceName = {
       singular: 'customer',
       plural: 'customers',
@@ -70,8 +89,6 @@ class CustomersComponent extends Component {
         onAction: () => this.deleteCustomersEvent(),
       },
     ]
-
-    //////////
 
     return (
       <div>
@@ -89,8 +106,8 @@ class CustomersComponent extends Component {
                 filters={[
                   {
                     key: 'accountStatusFilter',
-                    label: 'Province',
-                    operatorText: 'is',
+                    label: 'Located in',
+                    operatorText: 'province',
                     type: FilterType.Select,
                     options: [
                       'AB',
@@ -105,16 +122,19 @@ class CustomersComponent extends Component {
                       'PE',
                       'QC',
                       'YT',
-                    ]
+                    ],
                   },
                 ]}
-               
-                onFiltersChange={(appliedFilters) => {
-                  console.log(
-                    `Applied filters changed to ${appliedFilters}.`,
-                    'Todo: use setState to apply this change.'
-                  );
-                }}
+                appliedFilters={appliedFilters}
+                onFiltersChange={this.handleFiltersChange}
+                searchValue="Search is disabled, please use Filter"
+
+                // onFiltersChange={(appliedFilters) => {
+                //   console.log(
+                //     `Applied filters changed to ${appliedFilters}.`,
+                //     'Todo: use setState to apply this change.'
+                //   );
+                // }}
               />
             }
           />
@@ -122,6 +142,13 @@ class CustomersComponent extends Component {
       </div>
     )
   }
+  handleFiltersChange(appliedFilters) {
+    console.log(appliedFilters);
+    this.props.fetchCustomers(appliedFilters)
+    this.setState({ appliedFilters });
+    
+  }
+
 }
 
 export default CustomersComponent

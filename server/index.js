@@ -4,9 +4,9 @@ require('dotenv').config()
 const fs = require('fs')
 const express = require('express')
 const bodyParser = require('body-parser')
-const bodyParserRaw = require( 'body-parser' ).raw({
+const bodyParserRaw = require('body-parser').raw({
   type: '*/*',
-});
+})
 const session = require('express-session')
 const RedisStore = require('connect-redis')(session)
 const path = require('path')
@@ -79,8 +79,8 @@ const registerWebhook = function(shopDomain, accessToken, webhook) {
   shopify.webhook
     .create(webhook)
     .then(
-      response => console.log(`webhook '${webhook.topic}' created`),
-      err =>
+      (response) => console.log(`webhook '${webhook.topic}' created`),
+      (err) =>
         console.log(
           `Error creating webhook '${webhook.topic}'. ${JSON.stringify(
             err.response.body,
@@ -101,9 +101,9 @@ const registerCarrierService = function(
   shopify.carrierService
     .create(carrierService)
     .then(
-      response =>
+      (response) =>
         console.log(`carrierService '${carrierService.name}' created`),
-      err =>
+      (err) =>
         console.log(
           `Error creating carrierService '${
             carrierService.name
@@ -177,56 +177,59 @@ app.get('/', withShop({ authBaseUrl: '/shopify' }), function(
   })
 })
 
+function webhookHMACValidator(req, res, next) {
+  const shopifyHmac = req.get('X-Shopify-Hmac-SHA256')
 
-function webhookHMACValidator( req, res, next ) {
-  const shopifyHmac = req.get( 'X-Shopify-Hmac-SHA256' );
-
-  if ( ! shopifyHmac ) {
-    return res.status( 409 ).json({
+  if (!shopifyHmac) {
+    return res.status(409).json({
       error: 'Missing signature',
-    });
+    })
   }
 
   try {
     var calculated = crypto
-      .createHmac( 'SHA256', SHOPIFY_APP_SECRET )
-      .update( req.body )
-      .digest();
-  } catch( e ) {
-    return res.status( 409 ).json({
+      .createHmac('SHA256', SHOPIFY_APP_SECRET)
+      .update(req.body)
+      .digest()
+  } catch (e) {
+    return res.status(409).json({
       error: 'Invalid signature',
-    });
+    })
   }
 
-  var shopifyHmacBuffer = Buffer.from( shopifyHmac, 'base64' );
+  var shopifyHmacBuffer = Buffer.from(shopifyHmac, 'base64')
 
-  var hashEquals = false;
+  var hashEquals = false
 
   try {
-    hashEquals = crypto.timingSafeEqual( calculated, shopifyHmacBuffer )
-  } catch ( e ) {
-    hashEquals = false;
+    hashEquals = crypto.timingSafeEqual(calculated, shopifyHmacBuffer)
+  } catch (e) {
+    hashEquals = false
   }
 
-  if ( hashEquals ) {
-    return next();
+  if (hashEquals) {
+    return next()
   } else {
-    return res.status( 409 ).json({
+    return res.status(409).json({
       error: 'Invalid signature',
-    });
+    })
   }
 }
 
-app.post( '/order-create', bodyParserRaw, webhookHMACValidator, ( req, res, next ) => {
+app.post(
+  '/order-create',
+  bodyParserRaw,
+  webhookHMACValidator,
+  (req, res, next) => {
+    var decodedBodyString = req.body.toString('utf8')
 
-  var decodedBodyString = req.body.toString('utf8');
+    const body = JSON.parse(decodedBodyString)
 
-  const body = JSON.parse(decodedBodyString)
-  
-  newCustomerOrder(body);
-  
-  return res.status(200).json({ status: 'success' });
-});
+    newCustomerOrder(body)
+
+    return res.status(200).json({ status: 'success' })
+  },
+)
 
 app.post('/custom-shipping', bodyParser.json(), function(req, res) {
   const { province } = req.body.rate.destination
@@ -241,7 +244,7 @@ app.post('/custom-shipping', bodyParser.json(), function(req, res) {
     ],
   }
 
-  findAddress(req.body.rate).then(result => {
+  findAddress(req.body.rate).then((result) => {
     console.log(result)
 
     const { prePurchasedCases, prePurchasedBottles, orderTotal } = result
@@ -282,20 +285,20 @@ app.post('/custom-shipping', bodyParser.json(), function(req, res) {
   })
 })
 
-app.get('/customer-list', function(req, res) {
-
+app.post('/customer-list',  bodyParser.json(), function(req, res) {
+  console.log('the server side req.body is ', req.body)
   //TODO write error handing, catch.
-  getCustomerList().then((result) => {
-    console.log(result);
-    res.status(200).json({ result });
+
+  getCustomerList(req.body).then((result) => {
+    console.log(result)
+    res.status(200).json({ result })
   })
 })
 
 app.post('/delete-customers', bodyParser.json(), function(req, res) {
-  
   //TODO write error handling, also authenticate header?
   deleteCustomers(req.body.data).then(() => {
-    res.status(200).json({ "success": true });
+    res.status(200).json({ success: true })
   })
 })
 

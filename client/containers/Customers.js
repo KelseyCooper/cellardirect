@@ -11,8 +11,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    fetchCustomers: () => {
-      dispatch(fetchCustomers())
+    fetchCustomers: (filters) => {
+      dispatch(fetchCustomers(filters))
     },
     deleteCustomers: (data) => {
       dispatch(deleteCustomers(data))

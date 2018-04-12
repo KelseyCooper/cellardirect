@@ -20,7 +20,7 @@ async function findAddress(rate) {
   const { address1: address } = rate.destination
   const data = {}
   let orderTotal = 0
-  await rate.items.map(item => {
+  await rate.items.map((item) => {
     while (item.quantity >= 12) {
       item.quantity = item.quantity - 12
     }
@@ -30,7 +30,7 @@ async function findAddress(rate) {
     .select()
     .where('address', address)
     .returning('*')
-    .then(result => {
+    .then((result) => {
       // Checks if an address exists in the system
       if (result.length === 0) {
         data.orderTotal = orderTotal
@@ -43,8 +43,8 @@ async function findAddress(rate) {
         return knex('orders')
           .where('customer_id', result[0].id)
           .join('purchased_items', 'orders.id', '=', 'purchased_items.order_id')
-          .then(result => {
-            result.map(item => {
+          .then((result) => {
+            result.map((item) => {
               orderTotal += item.quantity
             })
             data.orderTotal = orderTotal
@@ -64,7 +64,7 @@ function newCustomerOrder(body) {
 
   // totals the amount of bottles purchased to insert or increment in the db
   let bottlesPurchased = 0
-  body.line_items.map(item => {
+  body.line_items.map((item) => {
     while (item.quantity >= 12) {
       item.quantity = item.quantity - 12
     }
@@ -75,7 +75,7 @@ function newCustomerOrder(body) {
   return knex('customers')
     .select()
     .where('address', address)
-    .then(result => {
+    .then((result) => {
       //if the customer doesn'y exist create one
       if (result.length === 0) {
         console.log('new user created')
@@ -90,7 +90,7 @@ function newCustomerOrder(body) {
             bottles_purchased: bottlesPurchased,
           })
           .returning('id')
-          .then(id => {
+          .then((id) => {
             // use the id of the customer created to create orders
             return knex('orders')
               .insert({
@@ -98,9 +98,9 @@ function newCustomerOrder(body) {
               })
               .returning('id')
           })
-          .then(id => {
+          .then((id) => {
             //use the id of the orders to create pruchased items
-            body.line_items.map(item => {
+            body.line_items.map((item) => {
               while (item.quantity >= 12) {
                 item.quantity = item.quantity - 12
               }
@@ -123,16 +123,16 @@ function newCustomerOrder(body) {
           .where('address', address)
           .increment('bottles_purchased', bottlesPurchased)
           .returning('id')
-          .then(result => {
+          .then((result) => {
             // insert the new order
             return knex('orders')
               .insert({
                 customer_id: result[0],
               })
               .returning('id')
-              .then(id => {
+              .then((id) => {
                 // insert the new purchases connected to the order
-                body.line_items.map(item => {
+                body.line_items.map((item) => {
                   // console.log(item.title)
                   return knex('purchased_items')
                     .insert({
@@ -161,9 +161,7 @@ function genericShippingInfo(
   province,
 ) {
   rates.service_code = province
-  rates.description = `You have previously paid for the shipping on ${
-    prePurchasedCases
-  } cases & bought ${prePurchasedBottles} bottles.`
+  rates.description = `You have previously paid for the shipping on ${prePurchasedCases} cases & bought ${prePurchasedBottles} bottles.`
   rates.service_name = `Cellar Direct Tiered Shipping - ${caseAmount(
     orderTotal,
   )} Case Tier - ${orderTotal}/${caseAmount(orderTotal) * 12} Bottles`
@@ -180,24 +178,48 @@ function shippingCalculator(rates, orderTotal, prePurchasedCases, province) {
   rates.total_price = shippingTotal.toString()
 }
 
-function getCustomerList() {
-  return knex('customers').returning('*')
+function isEmpty(obj) {
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) return false
+  }
+  return true
+}
+
+function mapFilters(filters){
+  
+}
+
+async function getCustomerList(filters) {
+  let customers = []
+  
+  if (isEmpty(filters)) {
+    console.log('no filters')
+    return knex('customers').returning('*')
+  } else {
+    let customers = []
+    await Promise.all(filters.map( async (item) => {
+      return await knex('customers')
+      .where('province', item.value)
+      .then((filterResult) => {
+        filterResult.map((item) => {
+          customers.push(item)
+        })
+      })
+    }))
+    return await customers
+  }
 }
 
 async function deleteCustomers(ids) {
-  
-  await ids.map(id => {
-
+  await ids.map((id) => {
     return knex('orders')
       .where('customer_id', id)
-      .then(result => {
-
-        result.map(item => {
-
+      .then((result) => {
+        result.map((item) => {
           return knex('purchased_items')
             .where('order_id', item.id)
             .del()
-            .then(result => {
+            .then((result) => {
               return true
             })
         })

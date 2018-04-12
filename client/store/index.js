@@ -4,6 +4,7 @@ import logger from 'redux-logger';
 
 const initState = {
   selectedItems: [],
+  appliedFilters: [],
   requestInProgress: false,
   requestError: null,
   responseBody: '',

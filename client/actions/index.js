@@ -1,13 +1,17 @@
-export function fetchCustomers() {
-  // const { verb, path, params } = requestFields;
-
+export function fetchCustomers(filters) {
+  console.log('the filters in the action are ', filters);
+  const bodyData = JSON.stringify(filters)
+  console.log('the filters after turning them to json ', bodyData);
+  
+  
   const fetchOptions = {
-    method: 'GET',
+    method: 'POST',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
     credentials: 'include',
+    body: bodyData
   }
 
   return dispatch => {
