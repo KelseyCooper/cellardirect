@@ -31,6 +31,9 @@ const {
   shippingCalculator,
   getCustomerList,
   deleteCustomers,
+  isEmpty,
+  getCustomerListWithSearch,
+  search
 } = require('./lib/helperFunctions')
 
 const { shippingRates } = require('./lib/shippingRates')
@@ -285,14 +288,48 @@ app.post('/custom-shipping', bodyParser.json(), function(req, res) {
   })
 })
 
-app.post('/customer-list',  bodyParser.json(), function(req, res) {
+
+app.post('/customer-list', bodyParser.json(), function(req, res) {
   console.log('the server side req.body is ', req.body)
   //TODO write error handing, catch.
 
-  getCustomerList(req.body).then((result) => {
-    console.log(result)
-    res.status(200).json({ result })
-  })
+  if (!isEmpty(req.body)) {
+    const provinceFilter = req.body.filter((item) => {
+      if (item.key === 'accountStatusFilter') {
+        return item.key
+      }
+    })
+
+    const searchFilter = req.body.filter((item) => {
+      if (item.key === 'Filter') {
+        return item.key
+      }
+    })
+
+    getCustomerList(provinceFilter).then((result) => {
+      if (!isEmpty(searchFilter)) {
+        getCustomerListWithSearch(searchFilter, result).then((searchResult) => {
+          const result = []
+          if (searchResult[0].length > 0) {
+            searchResult.map((item) => {
+              console.log(item, ' i am the item inside of the searchResult.map');
+              if(item.length > 0) {
+                result.push(item[0])
+              }
+            })
+          }
+          console.log(result, ' search filter after the search')
+          res.status(200).json({ result })
+        })
+      } else {
+        res.status(200).json({ result })
+      }
+    })
+  } else {
+    getCustomerList(req.body).then((result) => {
+      res.status(200).json({ result })
+    })
+  }
 })
 
 app.post('/delete-customers', bodyParser.json(), function(req, res) {

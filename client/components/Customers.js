@@ -16,8 +16,11 @@ class CustomersComponent extends Component {
 
     this.state = {
       appliedFilters: [],
+      searchValue: '',
     }
     this.handleFiltersChange = this.handleFiltersChange.bind(this);
+    this.handleSearchChange = this.handleSearchChange.bind(this);
+    this.handleSaveFilters = this.handleSaveFilters.bind(this)
   }
 
   componentDidMount() {
@@ -75,7 +78,7 @@ class CustomersComponent extends Component {
 
     /////////
 
-    const { appliedFilters } = this.state
+    const { appliedFilters, searchValue } = this.state
     /////////////
 
     const resourceName = {
@@ -92,6 +95,8 @@ class CustomersComponent extends Component {
 
     return (
       <div>
+        <p>Be aware that the search is case sensitive.</p>
+        <br />
         <Card>
           <ResourceList
             resourceName={resourceName}
@@ -127,7 +132,13 @@ class CustomersComponent extends Component {
                 ]}
                 appliedFilters={appliedFilters}
                 onFiltersChange={this.handleFiltersChange}
-                searchValue="Search is disabled, please use Filter"
+                searchValue={searchValue}
+                onSearchChange={this.handleSearchChange}
+
+                additionalAction={{
+                  content: 'Save',
+                  onAction: this.handleSaveFilters,
+                }}
 
                 // onFiltersChange={(appliedFilters) => {
                 //   console.log(
@@ -149,6 +160,27 @@ class CustomersComponent extends Component {
     
   }
 
+
+  handleSearchChange(searchValue) {
+    // const items = fetchCustomers();
+    this.setState({ searchValue });
+  }
+
+  handleSaveFilters() {
+    console.log(this.state.appliedFilters);
+    const appliedFiltersArray = this.state.appliedFilters
+
+    var search = {
+        key: 'Filter',
+        value: this.state.searchValue
+      }
+    
+    appliedFiltersArray.push(search)
+    
+    this.props.fetchCustomers(appliedFiltersArray)
+
+    this.setState({ appliedFilters: appliedFiltersArray });
+  }
 }
 
 export default CustomersComponent

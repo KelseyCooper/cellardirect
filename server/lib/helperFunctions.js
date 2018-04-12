@@ -244,6 +244,37 @@ async function deleteCustomers(ids) {
   return true
 }
 
+function search(nameKey, myArray) {
+  console.log(nameKey, myArray, '    these are the params in search')
+  let returnArray = []
+
+  for (var i = 0; i < myArray.length; i++) {
+    if (
+      myArray[i].first_name === nameKey ||
+      myArray[i].last_name === nameKey ||
+      myArray[i].province === nameKey ||
+      myArray[i].email === nameKey ||
+      myArray[i].address === nameKey
+    ) {
+      returnArray.push(myArray[i])
+    }
+  }
+  return returnArray
+}
+
+async function getCustomerListWithSearch(searchFilter, result) {
+  let searchResult = []
+  await Promise.all(
+    searchFilter.map(async (item) => {
+      const resultObject = search(item.value, result)
+      await searchResult.push(resultObject)
+    }),
+  )
+  console.log(searchResult, ' search result after searchfilter')
+
+  return await searchResult
+}
+
 module.exports = {
   caseAmount,
   findAddress,
@@ -252,4 +283,7 @@ module.exports = {
   shippingCalculator,
   getCustomerList,
   deleteCustomers,
+  isEmpty,
+  search,
+  getCustomerListWithSearch,
 }
