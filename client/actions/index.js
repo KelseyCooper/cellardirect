@@ -72,6 +72,24 @@ export function deleteCustomers(data) {
   } 
 }
 
+export function setAppliedFilters(filters) {
+  return {
+    type: 'SET_APPLIED_FILTERS',
+    payload: {
+      filters
+    },
+  }
+}
+
+export function setSearchValue(values) {
+  return {
+    type: 'SET_SEARCH_VALUES',
+    payload: {
+      values
+    }
+  }
+}
+
 export function handleSelectionChangeState(items) {
   return {
     type: 'UPDATE_SELECTED_ITEMS',

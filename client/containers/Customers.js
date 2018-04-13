@@ -1,11 +1,19 @@
 import { connect } from 'react-redux'
 import CustomersComponent from '../components/Customers'
-import { fetchCustomers, deleteCustomers, handleSelectionChangeState } from '../actions'
+import {
+  fetchCustomers,
+  deleteCustomers,
+  handleSelectionChangeState,
+  setAppliedFilters,
+  setSearchValue,
+} from '../actions'
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     customers: state.customers.result,
     selectedItems: state.selectedItems,
+    appliedFilters: state.appliedFilters,
+    searchValue: state.searchValue
   }
 }
 
@@ -19,7 +27,13 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     },
     handleSelectionChangeState: (items) => {
       dispatch(handleSelectionChangeState(items))
-    }
+    },
+    setAppliedFilters: (filters) => {
+      dispatch(setAppliedFilters(filters))
+    },
+    setSearchValue: (values) => {
+      dispatch(setSearchValue(values))
+    },
   }
 }
 

@@ -14,12 +14,8 @@ class CustomersComponent extends Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      appliedFilters: [],
-      searchValue: '',
-    }
-    this.handleFiltersChange = this.handleFiltersChange.bind(this);
-    this.handleSearchChange = this.handleSearchChange.bind(this);
+    this.handleFiltersChange = this.handleFiltersChange.bind(this)
+    this.handleSearchChange = this.handleSearchChange.bind(this)
     this.handleSaveFilters = this.handleSaveFilters.bind(this)
   }
 
@@ -35,6 +31,27 @@ class CustomersComponent extends Component {
     this.props.deleteCustomers(this.props.selectedItems)
   }
 
+  handleFiltersChange(appliedFilters) {
+    console.log(appliedFilters)
+    this.props.fetchCustomers(appliedFilters)
+    this.props.setAppliedFilters({ appliedFilters })
+  }
+
+  handleSearchChange(searchValue) {
+    this.props.setSearchValue(searchValue)
+  }
+
+  handleSaveFilters() {
+    const appliedFiltersArray = this.props.appliedFilters
+    const search = {
+      key: 'Filter',
+      value: this.props.searchValue,
+    }
+    appliedFiltersArray.push(search)
+    this.props.fetchCustomers(appliedFiltersArray)
+    this.props.setAppliedFilters({ appliedFilters: appliedFiltersArray })
+  }
+
   renderItem = (item) => {
     const {
       first_name,
@@ -45,7 +62,6 @@ class CustomersComponent extends Component {
       province,
     } = item
 
-    
     const media = <Avatar customer size="medium" name={name} />
 
     return (
@@ -73,13 +89,7 @@ class CustomersComponent extends Component {
   }
 
   render() {
-    const { customers } = this.props
-    // let customerList = customers || []
-
-    /////////
-
-    const { appliedFilters, searchValue } = this.state
-    /////////////
+    const { customers, appliedFilters, searchValue } = this.props
 
     const resourceName = {
       singular: 'customer',
@@ -134,52 +144,16 @@ class CustomersComponent extends Component {
                 onFiltersChange={this.handleFiltersChange}
                 searchValue={searchValue}
                 onSearchChange={this.handleSearchChange}
-
                 additionalAction={{
                   content: 'Save',
                   onAction: this.handleSaveFilters,
                 }}
-
-                // onFiltersChange={(appliedFilters) => {
-                //   console.log(
-                //     `Applied filters changed to ${appliedFilters}.`,
-                //     'Todo: use setState to apply this change.'
-                //   );
-                // }}
               />
             }
           />
         </Card>
       </div>
     )
-  }
-  handleFiltersChange(appliedFilters) {
-    console.log(appliedFilters);
-    this.props.fetchCustomers(appliedFilters)
-    this.setState({ appliedFilters });
-    
-  }
-
-
-  handleSearchChange(searchValue) {
-    // const items = fetchCustomers();
-    this.setState({ searchValue });
-  }
-
-  handleSaveFilters() {
-    console.log(this.state.appliedFilters);
-    const appliedFiltersArray = this.state.appliedFilters
-
-    var search = {
-        key: 'Filter',
-        value: this.state.searchValue
-      }
-    
-    appliedFiltersArray.push(search)
-    
-    this.props.fetchCustomers(appliedFiltersArray)
-
-    this.setState({ appliedFilters: appliedFiltersArray });
   }
 }
 
