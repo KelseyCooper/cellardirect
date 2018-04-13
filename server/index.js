@@ -53,8 +53,6 @@ const shopifyConfig = {
   shopStore: new MemoryStrategy(),
   afterAuth(request, response) {
     const { session: { accessToken, shop } } = request
-    console.log(accessToken)
-    console.log('^token^')
     registerWebhook(shop, accessToken, {
       topic: 'orders/create',
       address: `${SHOPIFY_APP_HOST}/order-create`,
@@ -318,7 +316,6 @@ app.post('/customer-list', bodyParser.json(), function(req, res) {
               })
             }
           }
-          console.log(result)
 
           res.status(200).json({ result })
         })

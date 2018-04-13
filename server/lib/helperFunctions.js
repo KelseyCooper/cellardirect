@@ -81,7 +81,6 @@ function newCustomerOrder(body) {
     .then((result) => {
       //if the customer doesn'y exist create one
       if (result.length === 0) {
-        console.log('new user created')
 
         return knex('customers')
           .insert({
@@ -136,7 +135,6 @@ function newCustomerOrder(body) {
               .then((id) => {
                 // insert the new purchases connected to the order
                 body.line_items.map((item) => {
-                  // console.log(item.title)
                   return knex('purchased_items')
                     .insert({
                       product_name: item.title,
