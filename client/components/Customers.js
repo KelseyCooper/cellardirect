@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import {
-  Page,
   Card,
   ResourceList,
   FilterType,
-  Pagination,
-  Provider,
   TextStyle,
-  Avatar,
+  Button,
+  Subheading,
+  TextContainer,
+  Spinner
 } from '@shopify/polaris'
 
 class CustomersComponent extends Component {
@@ -32,7 +32,6 @@ class CustomersComponent extends Component {
   }
 
   handleFiltersChange(appliedFilters) {
-    console.log(appliedFilters)
     this.props.fetchCustomers(appliedFilters)
     this.props.setAppliedFilters({ appliedFilters })
   }
@@ -61,8 +60,6 @@ class CustomersComponent extends Component {
       bottles_purchased,
       province,
     } = item
-
-    const media = <Avatar customer size="medium" name={name} />
 
     return (
       <ResourceList.Item
@@ -105,8 +102,11 @@ class CustomersComponent extends Component {
 
     return (
       <div>
-        <p>Be aware that the search is case sensitive.</p>
-        <br />
+        <Spinner size="large" color="teal" />
+        <TextContainer>
+          <p>Be aware that the search is case sensitive.</p>
+          </TextContainer>
+          <br />
         <Card>
           <ResourceList
             resourceName={resourceName}
