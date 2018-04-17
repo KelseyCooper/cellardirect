@@ -99,6 +99,25 @@ export function handleSelectionChangeState(items) {
   } 
 }
 
+export function setFormValues(values) {
+  return {
+    type: 'SET_FORM_VALUES',
+    payload: {
+      values
+    },
+  }
+}
+
+export function handleShippingFormChange(field, value) {
+  return {
+    type: 'UPDATE_SELECTED_FORM',
+    payload: {
+      field,
+      value
+    },
+  } 
+}
+
 
 function requestStartAction() {
   return {

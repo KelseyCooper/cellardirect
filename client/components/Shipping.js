@@ -8,15 +8,12 @@ import {
   Form,
   Button,
 } from '@shopify/polaris'
-import ShippingTextField from './ShippingTextField';
-
+import ShippingTextField from './ShippingTextField'
 
 class Shipping extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      newsletter: false,
-      email: '',
       AB: [10000, 9000, 8000, 7000, 6000, 5000, 4000, 3000, 2000, 1000],
       BC: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
       MB: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
@@ -30,61 +27,44 @@ class Shipping extends Component {
       QC: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
       SK: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
       YT: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
-      form: {
-          strAB: '',
-          strBC: '',
-          strMB: '',
-          strNB: '',
-          strNL: '',
-          strNT: '',
-          strNS: '',
-          strNU: '',
-          strON: '',
-          strPE: '',
-          strQC: '',
-          strSK: '',
-          strYT: '',
-      }
     }
   }
 
   componentDidMount() {
-      this.setState({
-          form: {
-              strAB: this.state.AB.join(', '),
-              strBC: this.state.BC.join(', '),
-              strMB: this.state.MB.join(', '),
-              strNB: this.state.NB.join(', '),
-              strNL: this.state.NL.join(', '),
-              strNT: this.state.NT.join(', '),
-              strNS: this.state.NS.join(', '),
-              strNU: this.state.NU.join(', '),
-              strON: this.state.ON.join(', '),
-              strPE: this.state.PE.join(', '),
-              strQC: this.state.QC.join(', '),
-              strSK: this.state.SK.join(', '),
-              strYT: this.state.YT.join(', ')
-          }
-      })
+    this.props.setFormValues({
+      AB: this.state.AB.join(', '),
+      BC: this.state.BC.join(', '),
+      MB: this.state.MB.join(', '),
+      NB: this.state.NB.join(', '),
+      NL: this.state.NL.join(', '),
+      NT: this.state.NT.join(', '),
+      NS: this.state.NS.join(', '),
+      NU: this.state.NU.join(', '),
+      ON: this.state.ON.join(', '),
+      PE: this.state.PE.join(', '),
+      QC: this.state.QC.join(', '),
+      SK: this.state.SK.join(', '),
+      YT: this.state.YT.join(', '),
+    })
   }
 
   render() {
-    const { newsletter, email, BC, MB, NB, NL, NT, NS, NU, ON, PE, QC, SK, YT } = this.state
-    const { strAB } = this.state.form
-    // let abComma = Array.prototype.join.call(AB, ', ')
-    // const abComma = AB.join(', ')
-    const bcComma = BC.join(', ')
-    const mbComma = MB.join(', ')
-    const nbComma = NB.join(', ')
-    const nlComma = NL.join(', ')
-    const ntComma = NT.join(', ')
-    const nsComma = NS.join(', ')
-    const nuComma = NU.join(', ')
-    const onComma = ON.join(', ')
-    const peComma = PE.join(', ')
-    const qcComma = QC.join(', ')
-    const skComma = SK.join(', ')
-    const ytComma = YT.join(', ')
+
+    const {
+      AB,
+      BC,
+      MB,
+      NB,
+      NL,
+      NT,
+      NS,
+      NU,
+      ON,
+      PE,
+      QC,
+      SK,
+      YT,
+    } = this.props.form
 
     return (
       <div>
@@ -118,20 +98,84 @@ class Shipping extends Component {
           <Card.Section title="Summary">
             <FormLayout>
               <Form onSubmit={this.handleSubmit}>
-
-                <ShippingTextField provComma={strAB} handleChange={this.handleChange} provCode="strAB" prov="Alberta"/>
-                <ShippingTextField provComma={BC} handleChange={this.handleChange} provCode="BC" prov="British Columbia"/>
-                <ShippingTextField provComma={MB} handleChange={this.handleChange} provCode="MB" prov="Manitoba"/>
-                <ShippingTextField provComma={NB} handleChange={this.handleChange} provCode="NB" prov="New Brunswick"/>
-                <ShippingTextField provComma={NL} handleChange={this.handleChange} provCode="NL" prov="Newfoundland"/>
-                <ShippingTextField provComma={NT} handleChange={this.handleChange} provCode="NT" prov="Northwest Territories"/>
-                <ShippingTextField provComma={NS} handleChange={this.handleChange} provCode="NS" prov="Noba Scotia"/>
-                <ShippingTextField provComma={NU} handleChange={this.handleChange} provCode="NU" prov="Nunavut"/>
-                <ShippingTextField provComma={ON} handleChange={this.handleChange} provCode="ON" prov="Ontario"/>
-                <ShippingTextField provComma={PE} handleChange={this.handleChange} provCode="PE" prov="Prince Edward Island"/>
-                <ShippingTextField provComma={QC} handleChange={this.handleChange} provCode="QC" prov="Quebec"/>
-                <ShippingTextField provComma={SK} handleChange={this.handleChange} provCode="SK" prov="Saskatchewan"/>
-                <ShippingTextField provComma={YT} handleChange={this.handleChange} provCode="YT" prov="Yukon"/>
+                <ShippingTextField
+                  provComma={AB}
+                  handleChange={this.handleChange}
+                  provCode="AB"
+                  prov="Alberta"
+                />
+                <ShippingTextField
+                  provComma={BC}
+                  handleChange={this.handleChange}
+                  provCode="BC"
+                  prov="British Columbia"
+                />
+                <ShippingTextField
+                  provComma={MB}
+                  handleChange={this.handleChange}
+                  provCode="MB"
+                  prov="Manitoba"
+                />
+                <ShippingTextField
+                  provComma={NB}
+                  handleChange={this.handleChange}
+                  provCode="NB"
+                  prov="New Brunswick"
+                />
+                <ShippingTextField
+                  provComma={NL}
+                  handleChange={this.handleChange}
+                  provCode="NL"
+                  prov="Newfoundland"
+                />
+                <ShippingTextField
+                  provComma={NT}
+                  handleChange={this.handleChange}
+                  provCode="NT"
+                  prov="Northwest Territories"
+                />
+                <ShippingTextField
+                  provComma={NS}
+                  handleChange={this.handleChange}
+                  provCode="NS"
+                  prov="Noba Scotia"
+                />
+                <ShippingTextField
+                  provComma={NU}
+                  handleChange={this.handleChange}
+                  provCode="NU"
+                  prov="Nunavut"
+                />
+                <ShippingTextField
+                  provComma={ON}
+                  handleChange={this.handleChange}
+                  provCode="ON"
+                  prov="Ontario"
+                />
+                <ShippingTextField
+                  provComma={PE}
+                  handleChange={this.handleChange}
+                  provCode="PE"
+                  prov="Prince Edward Island"
+                />
+                <ShippingTextField
+                  provComma={QC}
+                  handleChange={this.handleChange}
+                  provCode="QC"
+                  prov="Quebec"
+                />
+                <ShippingTextField
+                  provComma={SK}
+                  handleChange={this.handleChange}
+                  provCode="SK"
+                  prov="Saskatchewan"
+                />
+                <ShippingTextField
+                  provComma={YT}
+                  handleChange={this.handleChange}
+                  provCode="YT"
+                  prov="Yukon"
+                />
 
                 <Button submit>Submit Rates</Button>
               </Form>
@@ -148,50 +192,45 @@ class Shipping extends Component {
   handleSubmit = (event) => {
     console.log(event)
 
-    this.setState({ newsletter: false, email: '' })
+    // this.setState({ newsletter: false, email: '' })
     return (value) => {
-        console.log(value);
-        
+      console.log(value)
     }
   }
 
-
   splitTheString(CommaSepStr) {
-    var ResultArray = []; 
+    var ResultArray = []
 
-     if (CommaSepStr!= null) {
-         var noSpaces = CommaSepStr.replace(/\s+/g, '');
-        //  noSpaces = noSpaces.replace(/,\s*$/, "");
-         
-         
-         var SplitChars = ',';
-         if (noSpaces.indexOf(SplitChars) >= 0) {
+    if (CommaSepStr != null) {
+      var noSpaces = CommaSepStr.replace(/\s+/g, '')
+      //  noSpaces = noSpaces.replace(/,\s*$/, "");
 
-             ResultArray = noSpaces.split(SplitChars);
-
-         } else {
-            ResultArray = noSpaces.split();
-         }
-        
-     } 
+      var SplitChars = ','
+      if (noSpaces.indexOf(SplitChars) >= 0) {
+        ResultArray = noSpaces.split(SplitChars)
+      } else {
+        ResultArray = noSpaces.split()
+      }
+    }
     //  for (let i = 0; i < ResultArray.length; i++) {
     //      if (ResultArray[i] === "") {
     //         ResultArray.splice([i]);
     //      }
-         
+
     //  }
-    return ResultArray ;
- }
+    return ResultArray
+  }
 
   handleChange = (field) => {
-      
     return (value) => {
-        console.log(value);
-        const valueArray = this.splitTheString(value)
-        console.log(valueArray);
-        
-        
-        this.setState({ form: {[field]: value} })
+      //   console.log(value)
+      const valueArray = this.splitTheString(value)
+      //   console.log(valueArray)
+
+      //   this.setState({ form: { [field]: value } })
+      console.log([field])
+
+      this.props.handleShippingFormChange(field, value)
     }
   }
 }

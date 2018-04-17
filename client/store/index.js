@@ -12,6 +12,8 @@ const initState = {
   customers: {
     result: [],
   },
+  shippingFormValues: {
+  }
 }
 
 function reducer(state = initState, action) {
@@ -30,6 +32,21 @@ function reducer(state = initState, action) {
       return {
         ...state,
         searchValue: action.payload.values,
+      }
+    case 'UPDATE_SELECTED_FORM':
+    console.log(action.payload);
+    
+      return {
+        ...state,
+       shippingFormValues: {
+         ...state.shippingFormValues,
+         [action.payload.field]: action.payload.value,
+       }
+      }
+    case 'SET_FORM_VALUES':
+      return {
+        ...state,
+        shippingFormValues: action.payload.values
       }
     case 'REQUEST_START':
       return {
