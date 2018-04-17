@@ -81,7 +81,6 @@ function newCustomerOrder(body) {
     .then((result) => {
       //if the customer doesn'y exist create one
       if (result.length === 0) {
-
         return knex('customers')
           .insert({
             first_name: firstName,
@@ -192,20 +191,22 @@ function isEmpty(obj) {
 // Gets customers list and deals with province filters
 async function getCustomerList(filters) {
   let customers = []
-  
+
   if (isEmpty(filters)) {
     return knex('customers').returning('*')
   } else {
     let customers = []
-    await Promise.all(filters.map( async (item) => {
-      return await knex('customers')
-      .where('province', item.value)
-      .then((filterResult) => {
-        filterResult.map((item) => {
-          customers.push(item)
-        })
-      })
-    }))
+    await Promise.all(
+      filters.map(async (item) => {
+        return await knex('customers')
+          .where('province', item.value)
+          .then((filterResult) => {
+            filterResult.map((item) => {
+              customers.push(item)
+            })
+          })
+      }),
+    )
     return await customers
   }
 }
@@ -275,6 +276,24 @@ async function getCustomerListWithSearch(searchFilter, result) {
   return await searchResult
 }
 
+// Updates the shipping rates for all provinces, then returns the rates
+async function updateShipping(rates) {
+  
+  for (let key in rates) {
+    await knex('shipping_rates')
+    .update({
+      [key]: rates[key]
+    })
+  }
+
+  return await knex('shipping_rates')
+  .select('*')
+  .returning('*')
+  .then((result) => {
+    return result
+  })
+}
+
 module.exports = {
   caseAmount,
   findAddress,
@@ -286,4 +305,5 @@ module.exports = {
   isEmpty,
   search,
   getCustomerListWithSearch,
+  updateShipping,
 }

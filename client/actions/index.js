@@ -106,14 +106,11 @@ export function submitformvalues(form) {
     dispatch(requestStartAction())
 
     return fetch(`/update-shipping-rates`, options)
-      .then((response) => dispatch(requestCompleteDeleteCustomersAction(data)))
+      .then((response) => response.json())
+      .then((json) => dispatch(requestCompleteShippingAction(json)))
       .catch((error) => {
         dispatch(requestErrorAction(error))
       })
-  }
-
-  return {
-    type: 'FIX_LATER',
   }
 }
 
@@ -178,6 +175,17 @@ function requestCompleteCustomersAction(response) {
     payload: {
       response,
     },
+  }
+}
+
+function requestCompleteShippingAction(response) {
+  console.log(response, 'I am the response before being sent to the reducer');
+  
+  return {
+    type: 'FIX_LATER',
+    payload: {
+      response
+    }
   }
 }
 
