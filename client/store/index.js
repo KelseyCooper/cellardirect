@@ -13,7 +13,8 @@ const initState = {
     result: [],
   },
   shippingFormValues: {
-  }
+  },
+  shippingRates: []
 }
 
 function reducer(state = initState, action) {
@@ -33,6 +34,20 @@ function reducer(state = initState, action) {
         ...state,
         searchValue: action.payload.values,
       }
+      case 'FETCH_SHIPPING_RATES_COMPLETE':
+      return {
+        ...state,
+        requestInProgress: false,
+        requestError: null,
+        //TODO FINISH
+      }
+    case 'SET_SHIPPING_RATES_COMPLETE':
+    return {
+      ...state,
+      requestInProgress: false,
+      requestError: null,
+      shippingRates: action.payload.shippingData[0]
+    }
     case 'UPDATE_SELECTED_FORM':
     console.log(action.payload);
     

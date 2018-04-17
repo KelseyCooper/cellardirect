@@ -1,10 +1,16 @@
 import { connect } from 'react-redux'
 import ShippingComponent from '../components/Shipping'
-import { handleShippingFormChange, setFormValues, submitformvalues } from '../actions'
+import {
+  handleShippingFormChange,
+  setFormValues,
+  submitformvalues,
+  fetchRates,
+} from '../actions'
 
 const mapStateToProps = (state) => {
   return {
     form: state.shippingFormValues,
+    shippingRates: state.ShippingRates,
   }
 }
 
@@ -18,6 +24,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     },
     submitformvalues: (form) => {
       dispatch(submitformvalues(form))
+    },
+    fetchRates: () => {
+      dispatch(fetchRates())
     },
   }
 }

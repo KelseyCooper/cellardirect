@@ -31,6 +31,7 @@ class Shipping extends Component {
   }
 
   componentDidMount() {
+    this.props.fetchRates()
     this.props.setFormValues({
       AB: this.state.AB.join(', '),
       BC: this.state.BC.join(', '),
@@ -49,7 +50,6 @@ class Shipping extends Component {
   }
 
   render() {
-
     const {
       AB,
       BC,
@@ -194,7 +194,6 @@ class Shipping extends Component {
 
     this.props.submitformvalues(this.props.form)
   }
-
 
   handleChange = (field) => {
     return (value) => {

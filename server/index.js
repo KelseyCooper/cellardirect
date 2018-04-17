@@ -342,9 +342,9 @@ app.post('/delete-customers', bodyParser.json(), function(req, res) {
 app.post('/update-shipping-rates', bodyParser.json(), function(req, res) {
   // console.log(req.body, 'req in the server');
   
-  updateShipping(req.body).then((result) => {
+  updateShipping(req.body).then((shippingRates) => {
     //TODO write error handling, also authenticate header?
-    res.status(200).json({ result })
+    res.status(200).json({ ...shippingRates })
   })
   
 })

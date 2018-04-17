@@ -25,6 +25,29 @@ export function fetchCustomers(filters) {
   }
 }
 
+export function fetchRates() {
+
+  const fetchOptions = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  }
+
+  return (dispatch) => {
+    dispatch(requestStartAction())
+
+    return fetch(`/fetch-shipping-rates`, fetchOptions)
+      .then((response) => response.json())
+      .then((json) => dispatch(requestCompleteFetchRates(json)))
+      .catch((error) => {
+        dispatch(requestErrorAction(error))
+      })
+  }
+}
+
 export function deleteCustomers(data) {
   const ids = { data }
 
@@ -178,13 +201,22 @@ function requestCompleteCustomersAction(response) {
   }
 }
 
-function requestCompleteShippingAction(response) {
-  console.log(response, 'I am the response before being sent to the reducer');
+function requestCompleteFetchRates(rates) {
+  return {
+    type: 'FETCH_SHIPPING_RATES_COMPLETE',
+    payload: {
+      rates
+    }
+  }
+}
+
+function requestCompleteShippingAction(shippingData) {
+  console.log(shippingData, 'I am the response before being sent to the reducer');
   
   return {
-    type: 'FIX_LATER',
+    type: 'SET_SHIPPING_RATES_COMPLETE',
     payload: {
-      response
+      shippingData
     }
   }
 }
