@@ -95,7 +95,7 @@ class Shipping extends Component {
             </p>
           </Card.Section>
 
-          <Card.Section title="Summary">
+          <Card.Section title="Shipping Rates">
             <FormLayout>
               <Form onSubmit={this.handleSubmit}>
                 <ShippingTextField
@@ -192,44 +192,12 @@ class Shipping extends Component {
   handleSubmit = (event) => {
     console.log(event)
 
-    // this.setState({ newsletter: false, email: '' })
-    return (value) => {
-      console.log(value)
-    }
+    this.props.submitformvalues(this.props.form)
   }
 
-  splitTheString(CommaSepStr) {
-    var ResultArray = []
-
-    if (CommaSepStr != null) {
-      var noSpaces = CommaSepStr.replace(/\s+/g, '')
-      //  noSpaces = noSpaces.replace(/,\s*$/, "");
-
-      var SplitChars = ','
-      if (noSpaces.indexOf(SplitChars) >= 0) {
-        ResultArray = noSpaces.split(SplitChars)
-      } else {
-        ResultArray = noSpaces.split()
-      }
-    }
-    //  for (let i = 0; i < ResultArray.length; i++) {
-    //      if (ResultArray[i] === "") {
-    //         ResultArray.splice([i]);
-    //      }
-
-    //  }
-    return ResultArray
-  }
 
   handleChange = (field) => {
     return (value) => {
-      //   console.log(value)
-      const valueArray = this.splitTheString(value)
-      //   console.log(valueArray)
-
-      //   this.setState({ form: { [field]: value } })
-      console.log([field])
-
       this.props.handleShippingFormChange(field, value)
     }
   }
