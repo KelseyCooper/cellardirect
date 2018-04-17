@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import Customers from '../containers/Customers'
-import Shipping from './Shipping'
+import Shipping from '../containers/Shipping'
 
 import { Button } from '@shopify/polaris'
 

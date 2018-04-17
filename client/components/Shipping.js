@@ -10,6 +10,7 @@ import {
 } from '@shopify/polaris'
 import ShippingTextField from './ShippingTextField';
 
+
 class Shipping extends Component {
   constructor(props) {
     super(props)
@@ -29,12 +30,49 @@ class Shipping extends Component {
       QC: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
       SK: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
       YT: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
+      form: {
+          strAB: '',
+          strBC: '',
+          strMB: '',
+          strNB: '',
+          strNL: '',
+          strNT: '',
+          strNS: '',
+          strNU: '',
+          strON: '',
+          strPE: '',
+          strQC: '',
+          strSK: '',
+          strYT: '',
+      }
     }
   }
 
+  componentDidMount() {
+      this.setState({
+          form: {
+              strAB: this.state.AB.join(', '),
+              strBC: this.state.BC.join(', '),
+              strMB: this.state.MB.join(', '),
+              strNB: this.state.NB.join(', '),
+              strNL: this.state.NL.join(', '),
+              strNT: this.state.NT.join(', '),
+              strNS: this.state.NS.join(', '),
+              strNU: this.state.NU.join(', '),
+              strON: this.state.ON.join(', '),
+              strPE: this.state.PE.join(', '),
+              strQC: this.state.QC.join(', '),
+              strSK: this.state.SK.join(', '),
+              strYT: this.state.YT.join(', ')
+          }
+      })
+  }
+
   render() {
-    const { newsletter, email, BC, AB, MB, NB, NL, NT, NS, NU, ON, PE, QC, SK, YT } = this.state
-    let abComma = Array.prototype.join.call(AB, ', ')
+    const { newsletter, email, BC, MB, NB, NL, NT, NS, NU, ON, PE, QC, SK, YT } = this.state
+    const { strAB } = this.state.form
+    // let abComma = Array.prototype.join.call(AB, ', ')
+    // const abComma = AB.join(', ')
     const bcComma = BC.join(', ')
     const mbComma = MB.join(', ')
     const nbComma = NB.join(', ')
@@ -81,7 +119,7 @@ class Shipping extends Component {
             <FormLayout>
               <Form onSubmit={this.handleSubmit}>
 
-                <ShippingTextField provComma={abComma} handleChange={this.handleChange} provCode="AB" prov="Alberta"/>
+                <ShippingTextField provComma={strAB} handleChange={this.handleChange} provCode="strAB" prov="Alberta"/>
                 <ShippingTextField provComma={BC} handleChange={this.handleChange} provCode="BC" prov="British Columbia"/>
                 <ShippingTextField provComma={MB} handleChange={this.handleChange} provCode="MB" prov="Manitoba"/>
                 <ShippingTextField provComma={NB} handleChange={this.handleChange} provCode="NB" prov="New Brunswick"/>
@@ -95,7 +133,7 @@ class Shipping extends Component {
                 <ShippingTextField provComma={SK} handleChange={this.handleChange} provCode="SK" prov="Saskatchewan"/>
                 <ShippingTextField provComma={YT} handleChange={this.handleChange} provCode="YT" prov="Yukon"/>
 
-                <Button submit>Submit</Button>
+                <Button submit>Submit Rates</Button>
               </Form>
             </FormLayout>
           </Card.Section>
@@ -111,6 +149,10 @@ class Shipping extends Component {
     console.log(event)
 
     this.setState({ newsletter: false, email: '' })
+    return (value) => {
+        console.log(value);
+        
+    }
   }
 
 
@@ -119,16 +161,25 @@ class Shipping extends Component {
 
      if (CommaSepStr!= null) {
          var noSpaces = CommaSepStr.replace(/\s+/g, '');
+        //  noSpaces = noSpaces.replace(/,\s*$/, "");
          
          
          var SplitChars = ',';
          if (noSpaces.indexOf(SplitChars) >= 0) {
+
              ResultArray = noSpaces.split(SplitChars);
 
+         } else {
+            ResultArray = noSpaces.split();
          }
-     } else {
-         ResultArray = []
-     }
+        
+     } 
+    //  for (let i = 0; i < ResultArray.length; i++) {
+    //      if (ResultArray[i] === "") {
+    //         ResultArray.splice([i]);
+    //      }
+         
+    //  }
     return ResultArray ;
  }
 
@@ -140,7 +191,7 @@ class Shipping extends Component {
         console.log(valueArray);
         
         
-        this.setState({ [field]: valueArray })
+        this.setState({ form: {[field]: value} })
     }
   }
 }
