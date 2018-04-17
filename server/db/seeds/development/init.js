@@ -2,6 +2,7 @@ exports.seed = async function(knex, Promise) {
   await knex('purchased_items').del()
   await knex('orders').del()
   await knex('customers').del()
+  await knex('shipping_rates').del()
   await knex.raw('ALTER SEQUENCE customers_id_seq RESTART WITH 1')
   await knex.raw('ALTER SEQUENCE orders_id_seq RESTART WITH 1')
   await knex.raw('ALTER SEQUENCE purchased_items_id_seq RESTART WITH 1')
@@ -138,6 +139,23 @@ exports.seed = async function(knex, Promise) {
       product_name: 'Portuguese Red Wine',
       quantity: 12,
       order_id: 6,
+    })
+  })
+  .then(() => {
+    return knex('shipping_rates').insert({
+      ab: [10002, 9000, 7000, 6000, 5000, 4000, 3000, 2000, 1000],
+      bc: [1000, 900, 700, 600, 500, 400, 300, 200, 100],
+      mb: [1000, 900, 700, 600, 500, 400, 300, 200, 100],
+      nb: [1000, 900, 700, 600, 500, 400, 300, 200, 100],
+      nl: [1000, 900, 700, 600, 500, 400, 300, 200, 100],
+      nt: [1000, 900, 700, 600, 500, 400, 300, 200, 100],
+      ns: [1000, 900, 700, 600, 500, 400, 300, 200, 100],
+      nu: [1000, 900, 700, 600, 500, 400, 300, 200, 100],
+      on: [1000, 900, 700, 600, 500, 400, 300, 200, 100],
+      qc: [1000, 900, 700, 600, 500, 400, 300, 200, 100],
+      sk: [1000, 900, 700, 600, 500, 400, 300, 200, 100],
+      yt: [1000, 900, 700, 600, 500, 400, 300, 200, 100],
+
     })
   })
 }
