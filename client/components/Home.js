@@ -20,8 +20,8 @@ class Home extends Component {
           </Link>
           <br />
           <br />
-          <Route exact path="/" component={Shipping} />
-          <Route path="/shipping" component={Customers} />
+          <Route exact path="/" component={Customers} />
+          <Route path="/shipping" component={Shipping} />
         </div>
       </Router>
     )
