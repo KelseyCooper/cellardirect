@@ -1,12 +1,7 @@
-// const environment = process.env.NODE_ENV || 'development'
-// const configuration = require('../knexfile')[environment]
-// const database = require('knex')(configuration)
-
 const ENV = process.env.ENV || 'development'
 const knexConfig = require('../knexfile')
 const knex = require('knex')(knexConfig[ENV])
 
-const { shippingRates } = require('./shippingRates')
 
 // Totals the case amount purchased, 12 = 1, 13 = 2.
 function caseAmount(num) {
@@ -15,6 +10,16 @@ function caseAmount(num) {
     number -= 1
   }
   return number
+}
+
+// Returns the shipping rates from the db
+function fetchShippingRates() {
+  return knex('shipping_rates')
+  .select('*')
+  .returning('*')
+  .then((result) => {
+    return result
+  })
 }
 
 // finds address in the db
@@ -169,14 +174,18 @@ function genericShippingInfo(
 }
 
 // Calculates shipping amount
-function shippingCalculator(rates, orderTotal, prePurchasedCases, province) {
-  shippingKey = caseAmount(orderTotal)
+async function shippingCalculator(rates, orderTotal, prePurchasedCases, province) {
+
+  const shippingKey = caseAmount(orderTotal)
+  const shippingRates = await fetchShippingRates()
 
   let shippingTotal = 0
 
   for (let index = prePurchasedCases; index < shippingKey; index++) {
-    shippingTotal += shippingRates[`${province}`][index]
+    
+    shippingTotal += shippingRates[0][`${province}`][index]
   }
+  
   rates.total_price = shippingTotal.toString()
 }
 
@@ -276,14 +285,6 @@ async function getCustomerListWithSearch(searchFilter, result) {
   return await searchResult
 }
 
-function fetchShippingRates() {
-  return knex('shipping_rates')
-  .select('*')
-  .returning('*')
-  .then((result) => {
-    return result
-  })
-}
 
 // Updates the shipping rates for all provinces, then returns the rates
 async function updateShipping(rates) {

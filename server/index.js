@@ -38,8 +38,6 @@ const {
   fetchShippingRates,
 } = require('./lib/helperFunctions')
 
-const { shippingRates } = require('./lib/shippingRates')
-
 const {
   SHOPIFY_APP_KEY,
   SHOPIFY_APP_HOST,
@@ -237,7 +235,7 @@ app.post(
 )
 
 // Endpoint for the client to get the shipping amounts for the customer
-app.post('/custom-shipping', bodyParser.json(), function(req, res) {
+app.post('/custom-shipping', bodyParser.json(), async function(req, res) {
   const { province } = req.body.rate.destination
 
   let data = {
@@ -249,42 +247,55 @@ app.post('/custom-shipping', bodyParser.json(), function(req, res) {
     ],
   }
 
-  findAddress(req.body.rate).then((result) => {
-    const { prePurchasedCases, prePurchasedBottles, orderTotal } = result
-    if (result.prePurchasedCases === 0) {
-      genericShippingInfo(
+  const result = await findAddress(req.body.rate)
+  const { prePurchasedCases, prePurchasedBottles, orderTotal } = result
+  if (result.prePurchasedCases === 0) {
+    await genericShippingInfo(
+      data.rates[0],
+      prePurchasedCases,
+      prePurchasedBottles,
+      orderTotal,
+      province,
+    )
+
+    console.log(
+      shippingCalculator(
         data.rates[0],
-        prePurchasedCases,
-        prePurchasedBottles,
         orderTotal,
+        prePurchasedCases,
         province,
-      )
+      ),
+      'i am the return of the function with no return',
+    )
+    await shippingCalculator(
+      data.rates[0],
+      orderTotal,
+      prePurchasedCases,
+      province,
+    )
 
-      shippingCalculator(data.rates[0], orderTotal, prePurchasedCases, province)
-
-      res.json(data)
+    res.json(data)
+  } else {
+    await genericShippingInfo(
+      data.rates[0],
+      prePurchasedCases,
+      prePurchasedBottles,
+      orderTotal,
+      province,
+    )
+    if (result.prePurchasedCases === caseAmount(result.orderTotal)) {
+      data.rates[0].total_price = '00'
     } else {
-      genericShippingInfo(
+      //get the max key of shipping amounts.
+      await shippingCalculator(
         data.rates[0],
-        prePurchasedCases,
-        prePurchasedBottles,
         orderTotal,
+        prePurchasedCases,
         province,
       )
-      if (result.prePurchasedCases === caseAmount(result.orderTotal)) {
-        data.rates[0].total_price = '00'
-      } else {
-        //get the max key of shipping amounts.
-        shippingCalculator(
-          data.rates[0],
-          orderTotal,
-          prePurchasedCases,
-          province,
-        )
-      }
-      res.json(data)
     }
-  })
+    res.json(data)
+  }
 })
 
 // Gets the customer list to display in the shopify store, also handles filtering
@@ -342,25 +353,22 @@ app.post('/delete-customers', bodyParser.json(), function(req, res) {
 
 // Fetches the shipping rates
 app.get('/fetch-shipping-rates', function(req, res) {
-  
   fetchShippingRates().then((shippingRates) => {
-    console.log(shippingRates, 'rates after function');
-    
+    console.log(shippingRates, 'rates after function')
+
     //TODO write error handling, also authenticate header?
     res.status(200).json({ ...shippingRates })
   })
-  
 })
 
 // Updates the shipping rates and returns them
 app.post('/update-shipping-rates', bodyParser.json(), function(req, res) {
   // console.log(req.body, 'req in the server');
-  
+
   updateShipping(req.body).then((shippingRates) => {
     //TODO write error handling, also authenticate header?
     res.status(200).json({ ...shippingRates })
   })
-  
 })
 
 // Error Handlers
