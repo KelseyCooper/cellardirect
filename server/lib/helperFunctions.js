@@ -182,10 +182,16 @@ async function shippingCalculator(rates, orderTotal, prePurchasedCases, province
   let shippingTotal = 0
 
   for (let index = prePurchasedCases; index < shippingKey; index++) {
-    
-    shippingTotal += shippingRates[0][`${province}`][index]
+
+    // Checks if there is an amount for the givben index, if not returns 0 (aka free)
+    if (shippingRates[0][`${province}`][index]) {
+      shippingTotal += shippingRates[0][`${province}`][index]
+    }
+    else {
+      shippingTotal += 0
+    }
   }
-  
+
   rates.total_price = shippingTotal.toString()
 }
 
