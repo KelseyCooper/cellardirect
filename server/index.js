@@ -35,6 +35,7 @@ const {
   getCustomerListWithSearch,
   search,
   updateShipping,
+  fetchShippingRates,
 } = require('./lib/helperFunctions')
 
 const { shippingRates } = require('./lib/shippingRates')
@@ -339,6 +340,19 @@ app.post('/delete-customers', bodyParser.json(), function(req, res) {
   })
 })
 
+// Fetches the shipping rates
+app.get('/fetch-shipping-rates', function(req, res) {
+  
+  fetchShippingRates().then((shippingRates) => {
+    console.log(shippingRates, 'rates after function');
+    
+    //TODO write error handling, also authenticate header?
+    res.status(200).json({ ...shippingRates })
+  })
+  
+})
+
+// Updates the shipping rates and returns them
 app.post('/update-shipping-rates', bodyParser.json(), function(req, res) {
   // console.log(req.body, 'req in the server');
   

@@ -11,41 +11,24 @@ import {
 import ShippingTextField from './ShippingTextField'
 
 class Shipping extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      AB: [10000, 9000, 8000, 7000, 6000, 5000, 4000, 3000, 2000, 1000],
-      BC: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
-      MB: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
-      NB: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
-      NL: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
-      NT: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
-      NS: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
-      NU: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
-      ON: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
-      PE: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
-      QC: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
-      SK: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
-      YT: [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100],
-    }
-  }
 
   componentDidMount() {
-    this.props.fetchRates()
-    this.props.setFormValues({
-      AB: this.state.AB.join(', '),
-      BC: this.state.BC.join(', '),
-      MB: this.state.MB.join(', '),
-      NB: this.state.NB.join(', '),
-      NL: this.state.NL.join(', '),
-      NT: this.state.NT.join(', '),
-      NS: this.state.NS.join(', '),
-      NU: this.state.NU.join(', '),
-      ON: this.state.ON.join(', '),
-      PE: this.state.PE.join(', '),
-      QC: this.state.QC.join(', '),
-      SK: this.state.SK.join(', '),
-      YT: this.state.YT.join(', '),
+    this.props.fetchRates().then(() => {
+        this.props.setFormValues({
+          AB: this.props.shippingRates.AB.join(', '),
+          BC: this.props.shippingRates.BC.join(', '),
+          MB: this.props.shippingRates.MB.join(', '),
+          NB: this.props.shippingRates.NB.join(', '),
+          NL: this.props.shippingRates.NL.join(', '),
+          NT: this.props.shippingRates.NT.join(', '),
+          NS: this.props.shippingRates.NS.join(', '),
+          NU: this.props.shippingRates.NU.join(', '),
+          ON: this.props.shippingRates.ON.join(', '),
+          PE: this.props.shippingRates.PE.join(', '),
+          QC: this.props.shippingRates.QC.join(', '),
+          SK: this.props.shippingRates.SK.join(', '),
+          YT: this.props.shippingRates.YT.join(', '),
+        })
     })
   }
 
@@ -190,8 +173,6 @@ class Shipping extends Component {
     )
   }
   handleSubmit = (event) => {
-    console.log(event)
-
     this.props.submitformvalues(this.props.form)
   }
 

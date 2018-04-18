@@ -14,7 +14,9 @@ const initState = {
   },
   shippingFormValues: {
   },
-  shippingRates: []
+  shippingRates: {
+  }
+  
 }
 
 function reducer(state = initState, action) {
@@ -39,14 +41,16 @@ function reducer(state = initState, action) {
         ...state,
         requestInProgress: false,
         requestError: null,
-        //TODO FINISH
+        shippingRates: action.payload.rates[0]
       }
     case 'SET_SHIPPING_RATES_COMPLETE':
+    console.log(action.payload);
+    
     return {
       ...state,
       requestInProgress: false,
       requestError: null,
-      shippingRates: action.payload.shippingData[0]
+      shippingRates: action.payload.rates[0]
     }
     case 'UPDATE_SELECTED_FORM':
     console.log(action.payload);
@@ -98,7 +102,9 @@ function reducer(state = initState, action) {
         requestError: action.payload.requestError,
       }
     default:
-      return state
+      return {
+        ...state
+      }
   }
 }
 

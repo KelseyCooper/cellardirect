@@ -276,6 +276,15 @@ async function getCustomerListWithSearch(searchFilter, result) {
   return await searchResult
 }
 
+function fetchShippingRates() {
+  return knex('shipping_rates')
+  .select('*')
+  .returning('*')
+  .then((result) => {
+    return result
+  })
+}
+
 // Updates the shipping rates for all provinces, then returns the rates
 async function updateShipping(rates) {
   
@@ -306,4 +315,5 @@ module.exports = {
   search,
   getCustomerListWithSearch,
   updateShipping,
+  fetchShippingRates,
 }

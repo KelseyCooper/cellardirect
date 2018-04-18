@@ -10,7 +10,7 @@ import {
 const mapStateToProps = (state) => {
   return {
     form: state.shippingFormValues,
-    shippingRates: state.ShippingRates,
+    shippingRates: state.shippingRates,
   }
 }
 
@@ -26,7 +26,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
       dispatch(submitformvalues(form))
     },
     fetchRates: () => {
-      dispatch(fetchRates())
+      return dispatch(fetchRates())
     },
   }
 }

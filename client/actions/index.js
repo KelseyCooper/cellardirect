@@ -26,7 +26,8 @@ export function fetchCustomers(filters) {
 }
 
 export function fetchRates() {
-
+  console.log('fudge fudge fudge');
+  
   const fetchOptions = {
     method: 'GET',
     headers: {
@@ -202,6 +203,8 @@ function requestCompleteCustomersAction(response) {
 }
 
 function requestCompleteFetchRates(rates) {
+  console.log(rates, ' after the request comes in');
+  
   return {
     type: 'FETCH_SHIPPING_RATES_COMPLETE',
     payload: {
