@@ -1,7 +1,5 @@
 export function fetchCustomers(filters) {
-  console.log('the filters in the action are ', filters)
   const bodyData = JSON.stringify(filters)
-  console.log('the filters after turning them to json ', bodyData)
 
   const fetchOptions = {
     method: 'POST',
@@ -26,8 +24,6 @@ export function fetchCustomers(filters) {
 }
 
 export function fetchRates() {
-  console.log('fudge fudge fudge');
-  
   const fetchOptions = {
     method: 'GET',
     headers: {
@@ -51,7 +47,6 @@ export function fetchRates() {
 
 export function deleteCustomers(data) {
   const ids = { data }
-
   const bodyData = JSON.stringify(ids)
 
   const options = {
@@ -108,14 +103,14 @@ function splitTheString(CommaSepStr) {
 
 export function submitformvalues(form) {
   let finalObject = {}
+
   for (let key in form) {
-    console.log(form[key])
     const splitArray = splitTheString(form[key])
     finalObject[key] = splitArray
   }
 
   const bodyData = JSON.stringify(finalObject)
-  
+
   const options = {
     method: 'POST',
     headers: {
@@ -192,8 +187,6 @@ function requestStartAction() {
 }
 
 function requestCompleteCustomersAction(response) {
-  // const responseBody = JSON.stringify(json, null, 2)
-
   return {
     type: 'REQUEST_CUSTOMERS_COMPLETE',
     payload: {
@@ -203,30 +196,24 @@ function requestCompleteCustomersAction(response) {
 }
 
 function requestCompleteFetchRates(rates) {
-  console.log(rates, ' after the request comes in');
-  
   return {
     type: 'FETCH_SHIPPING_RATES_COMPLETE',
     payload: {
-      rates
-    }
+      rates,
+    },
   }
 }
 
 function requestCompleteShippingAction(shippingData) {
-  console.log(shippingData, 'I am the response before being sent to the reducer');
-  
   return {
     type: 'SET_SHIPPING_RATES_COMPLETE',
     payload: {
-      shippingData
-    }
+      shippingData,
+    },
   }
 }
 
 function requestCompleteDeleteCustomersAction(data) {
-  console.log(data, ' is the payload')
-
   return {
     type: 'DELETE_CUSTOMERS_COMPLETE',
     payload: {
