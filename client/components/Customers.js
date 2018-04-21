@@ -96,7 +96,7 @@ class CustomersComponent extends Component {
     const promotedBulkActions = [
       {
         content: 'Delete Customers ',
-        onAction: () => this.deleteCustomersEvent(),
+        onAction: () => {if(confirm('Are you sure you want to delete this/these customer?')) {this.deleteCustomersEvent()};}
       },
     ]
 
