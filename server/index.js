@@ -337,6 +337,17 @@ app.post('/customer-list', bodyParser.json(), function(req, res) {
       }
     })
   } else {
+    // DELETE ME LATER
+    function wait(ms) {
+      var start = new Date().getTime()
+      var end = start
+      while (end < start + ms) {
+        end = new Date().getTime()
+      }
+    }
+    wait(5000)
+    ///////////
+
     getCustomerList(req.body).then((result) => {
       res.status(200).json({ result })
     })

@@ -86,7 +86,7 @@ class CustomersComponent extends Component {
   }
 
   render() {
-    const { customers, appliedFilters, searchValue } = this.props
+    const { customers, appliedFilters, searchValue, requestInProgress } = this.props
 
     const resourceName = {
       singular: 'customer',
@@ -100,9 +100,12 @@ class CustomersComponent extends Component {
       },
     ]
 
+    const spinner = <Spinner size="large" color="teal" />
+
     return (
       <div>
-        <Spinner size="large" color="teal" />
+        { requestInProgress ? spinner : <div></div> }
+        
         <TextContainer>
           <p>Be aware that the search is case sensitive.</p>
           </TextContainer>

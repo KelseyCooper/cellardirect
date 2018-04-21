@@ -13,7 +13,8 @@ const mapStateToProps = (state) => {
     customers: state.customers.result,
     selectedItems: state.selectedItems,
     appliedFilters: state.appliedFilters,
-    searchValue: state.searchValue
+    searchValue: state.searchValue,
+    requestInProgress: state.requestInProgress
   }
 }
 
