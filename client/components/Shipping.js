@@ -7,28 +7,28 @@ import {
   TextField,
   Form,
   Button,
+  Spinner,
 } from '@shopify/polaris'
 import ShippingTextField from './ShippingTextField'
 
 class Shipping extends Component {
-
   componentDidMount() {
     this.props.fetchRates().then(() => {
-        this.props.setFormValues({
-          AB: this.props.shippingRates.AB.join(', '),
-          BC: this.props.shippingRates.BC.join(', '),
-          MB: this.props.shippingRates.MB.join(', '),
-          NB: this.props.shippingRates.NB.join(', '),
-          NL: this.props.shippingRates.NL.join(', '),
-          NT: this.props.shippingRates.NT.join(', '),
-          NS: this.props.shippingRates.NS.join(', '),
-          NU: this.props.shippingRates.NU.join(', '),
-          ON: this.props.shippingRates.ON.join(', '),
-          PE: this.props.shippingRates.PE.join(', '),
-          QC: this.props.shippingRates.QC.join(', '),
-          SK: this.props.shippingRates.SK.join(', '),
-          YT: this.props.shippingRates.YT.join(', '),
-        })
+      this.props.setFormValues({
+        AB: this.props.shippingRates.AB.join(', '),
+        BC: this.props.shippingRates.BC.join(', '),
+        MB: this.props.shippingRates.MB.join(', '),
+        NB: this.props.shippingRates.NB.join(', '),
+        NL: this.props.shippingRates.NL.join(', '),
+        NT: this.props.shippingRates.NT.join(', '),
+        NS: this.props.shippingRates.NS.join(', '),
+        NU: this.props.shippingRates.NU.join(', '),
+        ON: this.props.shippingRates.ON.join(', '),
+        PE: this.props.shippingRates.PE.join(', '),
+        QC: this.props.shippingRates.QC.join(', '),
+        SK: this.props.shippingRates.SK.join(', '),
+        YT: this.props.shippingRates.YT.join(', '),
+      })
     })
   }
 
@@ -48,6 +48,101 @@ class Shipping extends Component {
       SK,
       YT,
     } = this.props.form
+
+    const { requestInProgress } = this.props
+
+    const spinner = <Spinner size="large" color="teal" />
+
+    const shippingRatesCard = (
+      <div>
+        <Card.Section title="Shipping Rates">
+          <FormLayout>
+            <Form onSubmit={this.handleSubmit}>
+              <ShippingTextField
+                provComma={AB}
+                handleChange={this.handleChange}
+                provCode="AB"
+                prov="Alberta"
+              />
+              <ShippingTextField
+                provComma={BC}
+                handleChange={this.handleChange}
+                provCode="BC"
+                prov="British Columbia"
+              />
+              <ShippingTextField
+                provComma={MB}
+                handleChange={this.handleChange}
+                provCode="MB"
+                prov="Manitoba"
+              />
+              <ShippingTextField
+                provComma={NB}
+                handleChange={this.handleChange}
+                provCode="NB"
+                prov="New Brunswick"
+              />
+              <ShippingTextField
+                provComma={NL}
+                handleChange={this.handleChange}
+                provCode="NL"
+                prov="Newfoundland"
+              />
+              <ShippingTextField
+                provComma={NT}
+                handleChange={this.handleChange}
+                provCode="NT"
+                prov="Northwest Territories"
+              />
+              <ShippingTextField
+                provComma={NS}
+                handleChange={this.handleChange}
+                provCode="NS"
+                prov="Noba Scotia"
+              />
+              <ShippingTextField
+                provComma={NU}
+                handleChange={this.handleChange}
+                provCode="NU"
+                prov="Nunavut"
+              />
+              <ShippingTextField
+                provComma={ON}
+                handleChange={this.handleChange}
+                provCode="ON"
+                prov="Ontario"
+              />
+              <ShippingTextField
+                provComma={PE}
+                handleChange={this.handleChange}
+                provCode="PE"
+                prov="Prince Edward Island"
+              />
+              <ShippingTextField
+                provComma={QC}
+                handleChange={this.handleChange}
+                provCode="QC"
+                prov="Quebec"
+              />
+              <ShippingTextField
+                provComma={SK}
+                handleChange={this.handleChange}
+                provCode="SK"
+                prov="Saskatchewan"
+              />
+              <ShippingTextField
+                provComma={YT}
+                handleChange={this.handleChange}
+                provCode="YT"
+                prov="Yukon"
+              />
+
+              <Button submit>Submit Rates</Button>
+            </Form>
+          </FormLayout>
+        </Card.Section>
+      </div>
+    )
 
     return (
       <div>
@@ -77,98 +172,8 @@ class Shipping extends Component {
               </TextStyle>
             </p>
           </Card.Section>
-
-          <Card.Section title="Shipping Rates">
-            <FormLayout>
-              <Form onSubmit={this.handleSubmit}>
-                <ShippingTextField
-                  provComma={AB}
-                  handleChange={this.handleChange}
-                  provCode="AB"
-                  prov="Alberta"
-                />
-                <ShippingTextField
-                  provComma={BC}
-                  handleChange={this.handleChange}
-                  provCode="BC"
-                  prov="British Columbia"
-                />
-                <ShippingTextField
-                  provComma={MB}
-                  handleChange={this.handleChange}
-                  provCode="MB"
-                  prov="Manitoba"
-                />
-                <ShippingTextField
-                  provComma={NB}
-                  handleChange={this.handleChange}
-                  provCode="NB"
-                  prov="New Brunswick"
-                />
-                <ShippingTextField
-                  provComma={NL}
-                  handleChange={this.handleChange}
-                  provCode="NL"
-                  prov="Newfoundland"
-                />
-                <ShippingTextField
-                  provComma={NT}
-                  handleChange={this.handleChange}
-                  provCode="NT"
-                  prov="Northwest Territories"
-                />
-                <ShippingTextField
-                  provComma={NS}
-                  handleChange={this.handleChange}
-                  provCode="NS"
-                  prov="Noba Scotia"
-                />
-                <ShippingTextField
-                  provComma={NU}
-                  handleChange={this.handleChange}
-                  provCode="NU"
-                  prov="Nunavut"
-                />
-                <ShippingTextField
-                  provComma={ON}
-                  handleChange={this.handleChange}
-                  provCode="ON"
-                  prov="Ontario"
-                />
-                <ShippingTextField
-                  provComma={PE}
-                  handleChange={this.handleChange}
-                  provCode="PE"
-                  prov="Prince Edward Island"
-                />
-                <ShippingTextField
-                  provComma={QC}
-                  handleChange={this.handleChange}
-                  provCode="QC"
-                  prov="Quebec"
-                />
-                <ShippingTextField
-                  provComma={SK}
-                  handleChange={this.handleChange}
-                  provCode="SK"
-                  prov="Saskatchewan"
-                />
-                <ShippingTextField
-                  provComma={YT}
-                  handleChange={this.handleChange}
-                  provCode="YT"
-                  prov="Yukon"
-                />
-
-                <Button submit>Submit Rates</Button>
-              </Form>
-            </FormLayout>
-          </Card.Section>
+          {requestInProgress ? spinner : shippingRatesCard}
         </Card>
-        <Card>
-          <TextContainer />
-        </Card>
-        <br />
       </div>
     )
   }

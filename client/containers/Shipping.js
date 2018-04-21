@@ -11,6 +11,7 @@ const mapStateToProps = (state) => {
   return {
     form: state.shippingFormValues,
     shippingRates: state.shippingRates,
+    requestInProgress: state.requestInProgress,
   }
 }
 

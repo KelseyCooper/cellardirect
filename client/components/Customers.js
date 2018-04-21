@@ -7,7 +7,7 @@ import {
   Button,
   Subheading,
   TextContainer,
-  Spinner
+  Spinner,
 } from '@shopify/polaris'
 
 class CustomersComponent extends Component {
@@ -86,7 +86,12 @@ class CustomersComponent extends Component {
   }
 
   render() {
-    const { customers, appliedFilters, searchValue, requestInProgress } = this.props
+    const {
+      customers,
+      appliedFilters,
+      searchValue,
+      requestInProgress,
+    } = this.props
 
     const resourceName = {
       singular: 'customer',
@@ -96,20 +101,21 @@ class CustomersComponent extends Component {
     const promotedBulkActions = [
       {
         content: 'Delete Customers ',
-        onAction: () => {if(confirm('Are you sure you want to delete this/these customer?')) {this.deleteCustomersEvent()};}
+        onAction: () => {
+          if (confirm('Are you sure you want to delete this/these customer?')) {
+            this.deleteCustomersEvent()
+          }
+        },
       },
     ]
 
     const spinner = <Spinner size="large" color="teal" />
-
-    return (
+    const customerPage = (
       <div>
-        { requestInProgress ? spinner : <div></div> }
-        
         <TextContainer>
           <p>Be aware that the search is case sensitive.</p>
-          </TextContainer>
-          <br />
+        </TextContainer>
+        <br />
         <Card>
           <ResourceList
             resourceName={resourceName}
@@ -157,6 +163,8 @@ class CustomersComponent extends Component {
         </Card>
       </div>
     )
+
+    return <div>{requestInProgress ? spinner : customerPage}</div>
   }
 }
 
