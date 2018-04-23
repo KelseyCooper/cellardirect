@@ -232,13 +232,10 @@ async function deleteCustomers(ids) {
     return knex('orders')
       .where('customer_id', id)
       .then((result) => {
-        result.map((item) => {
-          return knex('purchased_items')
+        result.map( async (item) => {
+          return await knex('purchased_items')
             .where('order_id', item.id)
             .del()
-            .then((result) => {
-              return true
-            })
         })
         return true
       })

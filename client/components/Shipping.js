@@ -11,6 +11,7 @@ import {
 } from '@shopify/polaris'
 import ShippingTextField from './ShippingTextField'
 
+
 class Shipping extends Component {
   componentDidMount() {
     this.props.fetchRates().then(() => {

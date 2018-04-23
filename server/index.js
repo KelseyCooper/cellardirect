@@ -258,15 +258,6 @@ app.post('/custom-shipping', bodyParser.json(), async function(req, res) {
       province,
     )
 
-    console.log(
-      shippingCalculator(
-        data.rates[0],
-        orderTotal,
-        prePurchasedCases,
-        province,
-      ),
-      'i am the return of the function with no return',
-    )
     await shippingCalculator(
       data.rates[0],
       orderTotal,
@@ -338,14 +329,14 @@ app.post('/customer-list', bodyParser.json(), function(req, res) {
     })
   } else {
     // DELETE ME LATER
-    function wait(ms) {
-      var start = new Date().getTime()
-      var end = start
-      while (end < start + ms) {
-        end = new Date().getTime()
-      }
-    }
-    wait(5000)
+    // function wait(ms) {
+    //   var start = new Date().getTime()
+    //   var end = start
+    //   while (end < start + ms) {
+    //     end = new Date().getTime()
+    //   }
+    // }
+    // wait(5000)
     ///////////
 
     getCustomerList(req.body).then((result) => {
@@ -365,7 +356,6 @@ app.post('/delete-customers', bodyParser.json(), function(req, res) {
 // Fetches the shipping rates
 app.get('/fetch-shipping-rates', function(req, res) {
   fetchShippingRates().then((shippingRates) => {
-    console.log(shippingRates, 'rates after function')
 
     //TODO write error handling, also authenticate header?
     res.status(200).json({ ...shippingRates })
@@ -374,7 +364,6 @@ app.get('/fetch-shipping-rates', function(req, res) {
 
 // Updates the shipping rates and returns them
 app.post('/update-shipping-rates', bodyParser.json(), function(req, res) {
-  // console.log(req.body, 'req in the server');
 
   updateShipping(req.body).then((shippingRates) => {
     //TODO write error handling, also authenticate header?
