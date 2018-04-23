@@ -47,6 +47,7 @@ module.exports = {
     libraryTarget: 'var',
   },
   module: {
+    
     loaders: [
       {
         test: /\.jsx?$/,
@@ -81,6 +82,24 @@ module.exports = {
       {
         test: /\.css$/,
         include: path.resolve(__dirname, '../node_modules/@shopify/polaris'),
+        loaders: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+            query: {
+              sourceMap,
+              modules: true,
+              importLoaders: 1,
+              localIdentName: '[local]',
+            },
+          },
+        ],
+      },
+      {
+        test: /\.css$/,
+        include: path.resolve(__dirname, '../node_modules/react-s-alert'),
         loaders: [
           {
             loader: 'style-loader',

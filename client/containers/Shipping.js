@@ -24,7 +24,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
       dispatch(setFormValues(values))
     },
     submitformvalues: (form) => {
-      dispatch(submitformvalues(form))
+      return dispatch(submitformvalues(form))
     },
     fetchRates: () => {
       return dispatch(fetchRates())

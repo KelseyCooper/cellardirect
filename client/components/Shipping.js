@@ -10,7 +10,9 @@ import {
   Spinner,
 } from '@shopify/polaris'
 import ShippingTextField from './ShippingTextField'
-
+import Alert from 'react-s-alert'
+import 'react-s-alert/dist/s-alert-default.css'
+import 'react-s-alert/dist/s-alert-css-effects/scale.css';
 
 class Shipping extends Component {
   componentDidMount() {
@@ -56,92 +58,90 @@ class Shipping extends Component {
 
     const shippingRatesCard = (
       <div>
-        <Card.Section title="Shipping Rates">
-          <FormLayout>
-            <Form onSubmit={this.handleSubmit}>
-              <ShippingTextField
-                provComma={AB}
-                handleChange={this.handleChange}
-                provCode="AB"
-                prov="Alberta"
-              />
-              <ShippingTextField
-                provComma={BC}
-                handleChange={this.handleChange}
-                provCode="BC"
-                prov="British Columbia"
-              />
-              <ShippingTextField
-                provComma={MB}
-                handleChange={this.handleChange}
-                provCode="MB"
-                prov="Manitoba"
-              />
-              <ShippingTextField
-                provComma={NB}
-                handleChange={this.handleChange}
-                provCode="NB"
-                prov="New Brunswick"
-              />
-              <ShippingTextField
-                provComma={NL}
-                handleChange={this.handleChange}
-                provCode="NL"
-                prov="Newfoundland"
-              />
-              <ShippingTextField
-                provComma={NT}
-                handleChange={this.handleChange}
-                provCode="NT"
-                prov="Northwest Territories"
-              />
-              <ShippingTextField
-                provComma={NS}
-                handleChange={this.handleChange}
-                provCode="NS"
-                prov="Noba Scotia"
-              />
-              <ShippingTextField
-                provComma={NU}
-                handleChange={this.handleChange}
-                provCode="NU"
-                prov="Nunavut"
-              />
-              <ShippingTextField
-                provComma={ON}
-                handleChange={this.handleChange}
-                provCode="ON"
-                prov="Ontario"
-              />
-              <ShippingTextField
-                provComma={PE}
-                handleChange={this.handleChange}
-                provCode="PE"
-                prov="Prince Edward Island"
-              />
-              <ShippingTextField
-                provComma={QC}
-                handleChange={this.handleChange}
-                provCode="QC"
-                prov="Quebec"
-              />
-              <ShippingTextField
-                provComma={SK}
-                handleChange={this.handleChange}
-                provCode="SK"
-                prov="Saskatchewan"
-              />
-              <ShippingTextField
-                provComma={YT}
-                handleChange={this.handleChange}
-                provCode="YT"
-                prov="Yukon"
-              />
+        <FormLayout>
+          <Form onSubmit={this.handleSubmit}>
+            <ShippingTextField
+              provComma={AB}
+              handleChange={this.handleChange}
+              provCode="AB"
+              prov="Alberta"
+            />
+            <ShippingTextField
+              provComma={BC}
+              handleChange={this.handleChange}
+              provCode="BC"
+              prov="British Columbia"
+            />
+            <ShippingTextField
+              provComma={MB}
+              handleChange={this.handleChange}
+              provCode="MB"
+              prov="Manitoba"
+            />
+            <ShippingTextField
+              provComma={NB}
+              handleChange={this.handleChange}
+              provCode="NB"
+              prov="New Brunswick"
+            />
+            <ShippingTextField
+              provComma={NL}
+              handleChange={this.handleChange}
+              provCode="NL"
+              prov="Newfoundland"
+            />
+            <ShippingTextField
+              provComma={NT}
+              handleChange={this.handleChange}
+              provCode="NT"
+              prov="Northwest Territories"
+            />
+            <ShippingTextField
+              provComma={NS}
+              handleChange={this.handleChange}
+              provCode="NS"
+              prov="Noba Scotia"
+            />
+            <ShippingTextField
+              provComma={NU}
+              handleChange={this.handleChange}
+              provCode="NU"
+              prov="Nunavut"
+            />
+            <ShippingTextField
+              provComma={ON}
+              handleChange={this.handleChange}
+              provCode="ON"
+              prov="Ontario"
+            />
+            <ShippingTextField
+              provComma={PE}
+              handleChange={this.handleChange}
+              provCode="PE"
+              prov="Prince Edward Island"
+            />
+            <ShippingTextField
+              provComma={QC}
+              handleChange={this.handleChange}
+              provCode="QC"
+              prov="Quebec"
+            />
+            <ShippingTextField
+              provComma={SK}
+              handleChange={this.handleChange}
+              provCode="SK"
+              prov="Saskatchewan"
+            />
+            <ShippingTextField
+              provComma={YT}
+              handleChange={this.handleChange}
+              provCode="YT"
+              prov="Yukon"
+            />
 
-              <Button submit>Submit Rates</Button>
-            </Form>
-          </FormLayout>
-        </Card.Section>
+            <Button submit>Submit Rates</Button>
+          </Form>
+        </FormLayout>
       </div>
     )
 
@@ -173,13 +173,22 @@ class Shipping extends Component {
               </TextStyle>
             </p>
           </Card.Section>
-          {requestInProgress ? spinner : shippingRatesCard}
+          <Card.Section title="Shipping Rates">
+            {requestInProgress ? spinner : shippingRatesCard}
+          </Card.Section>
         </Card>
+          <Alert stack={{limit: 3}} />
       </div>
     )
   }
   handleSubmit = (event) => {
     this.props.submitformvalues(this.props.form)
+    .then(() => {
+      Alert.success('Shipping Rates have been updated', {
+        position: 'top',
+        effect: 'scale'
+      })
+    })
   }
 
   handleChange = (field) => {
