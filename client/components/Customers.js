@@ -10,6 +10,10 @@ import {
   Spinner,
 } from '@shopify/polaris'
 
+import Alert from 'react-s-alert'
+import 'react-s-alert/dist/s-alert-default.css'
+import 'react-s-alert/dist/s-alert-css-effects/scale.css'
+
 class CustomersComponent extends Component {
   constructor(props) {
     super(props)
@@ -29,6 +33,12 @@ class CustomersComponent extends Component {
 
   deleteCustomersEvent = (e) => {
     this.props.deleteCustomers(this.props.selectedItems)
+    .then (() => {
+      Alert.success('Customer(s) have been successfully deleted!', {
+        position: 'top',
+        effect: 'scale'
+      })
+    })
   }
 
   handleFiltersChange(appliedFilters) {
@@ -160,6 +170,7 @@ class CustomersComponent extends Component {
               />
             }
           />
+          <Alert stack={{ limit: 3 }} />
         </Card>
       </div>
     )

@@ -24,7 +24,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
       dispatch(fetchCustomers(filters))
     },
     deleteCustomers: (data) => {
-      dispatch(deleteCustomers(data))
+      return dispatch(deleteCustomers(data))
     },
     handleSelectionChangeState: (items) => {
       dispatch(handleSelectionChangeState(items))

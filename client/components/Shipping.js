@@ -10,6 +10,7 @@ import {
   Spinner,
 } from '@shopify/polaris'
 import ShippingTextField from './ShippingTextField'
+
 import Alert from 'react-s-alert'
 import 'react-s-alert/dist/s-alert-default.css'
 import 'react-s-alert/dist/s-alert-css-effects/scale.css';
@@ -176,8 +177,8 @@ class Shipping extends Component {
           <Card.Section title="Shipping Rates">
             {requestInProgress ? spinner : shippingRatesCard}
           </Card.Section>
-        </Card>
           <Alert stack={{limit: 3}} />
+        </Card>
       </div>
     )
   }
