@@ -49,3 +49,31 @@ The admins of the store are given access to the full app, and are able to delete
 !["Customer List"](https://media.giphy.com/media/ljH3nnZmZtCGCkpDku/giphy.gif)
 
 !["Shipping Rates"](https://media.giphy.com/media/uiZ4fX434bcu2Y2H8k/giphy.gif)
+
+# Installation
+
+Clone this repo
+
+```yarn install```
+
+In the repo folder start a local tunnel using ngrok
+``` ./ngrok http 3000
+```
+
+create new database named: cellardirect_node
+
+Create a new app through the Shopify Developer program.
+
+rename .env.example .env
+
+Copy this new apps API key and API secret into the .env file.
+
+Copy the ngrok forwarding https into the .env file as the APP_HOST
+
+In the Shopify developer Program App set the App URL to {ngrok https}, and the Whitelisted Redirection URL(s) to {ngrok https}/shopify/auth/callback
+
+In the project folder ```yarn start```
+
+In the server folder run ```knex migrate:latest``` & ```knex seed:run```
+
+Visit the ngrok https url, install the app onto your shopify site or shopify developer site.
