@@ -293,7 +293,6 @@ app.post('/custom-shipping', bodyParser.json(), async function(req, res) {
 
 // Gets the customer list to display in the shopify store, also handles filtering
 app.post('/customer-list', bodyParser.json(), function(req, res) {
-  //TODO write error handling, catch.
   if (!isEmpty(req.body)) {
     const provinceFilter = req.body.filter((item) => {
       if (item.key === 'accountStatusFilter') {
@@ -330,7 +329,6 @@ app.post('/customer-list', bodyParser.json(), function(req, res) {
       }
     })
   } else {
-
     getCustomerList(req.body).then((result) => {
       res.status(200).json({ result })
     })
@@ -339,7 +337,6 @@ app.post('/customer-list', bodyParser.json(), function(req, res) {
 
 // Deletes a range of customers by their ids
 app.post('/delete-customers', bodyParser.json(), function(req, res) {
-  //TODO write error handling, also authenticate header?
   deleteCustomers(req.body.data).then((ids) => {
     res.status(200).json({ success: true })
   })
@@ -348,17 +345,13 @@ app.post('/delete-customers', bodyParser.json(), function(req, res) {
 // Fetches the shipping rates
 app.get('/fetch-shipping-rates', function(req, res) {
   fetchShippingRates().then((shippingRates) => {
-
-    //TODO write error handling, also authenticate header?
     res.status(200).json({ ...shippingRates })
   })
 })
 
 // Updates the shipping rates and returns them
 app.post('/update-shipping-rates', bodyParser.json(), function(req, res) {
-
   updateShipping(req.body).then((shippingRates) => {
-    //TODO write error handling, also authenticate header?
     res.status(200).json({ ...shippingRates })
   })
 })

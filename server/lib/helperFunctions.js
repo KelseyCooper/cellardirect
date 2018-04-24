@@ -24,6 +24,8 @@ function fetchShippingRates() {
 // finds address in the db
 async function findAddress(rate) {
   const { address1: address } = rate.destination
+  console.log(rate);
+  
   const data = {}
   let orderTotal = 0
   await rate.items.map((item) => {
@@ -228,12 +230,12 @@ async function getCustomerList(filters) {
 }
 
 // deletes customer, orders, and purchased_items from the db
+// This function extremly refactored by using onDelete('cascade') in the db schema for all related foreign tables
 async function deleteCustomers(ids) {
-
   await ids.map(async (id) => {
     await knex('customers')
-    .where('id', id)
-    .del()
+      .where('id', id)
+      .del()
   })
 
   return ids
