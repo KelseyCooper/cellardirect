@@ -138,6 +138,7 @@ export function submitformvalues(form) {
   }
 }
 
+// Sets the applied filters in the redux store
 export function setAppliedFilters(filters) {
   return {
     type: 'SET_APPLIED_FILTERS',
@@ -147,6 +148,7 @@ export function setAppliedFilters(filters) {
   }
 }
 
+// Sets the search field value in the redux store
 export function setSearchValue(values) {
   return {
     type: 'SET_SEARCH_VALUES',
@@ -156,6 +158,7 @@ export function setSearchValue(values) {
   }
 }
 
+// Updates the redux store on which customers have been selected.
 export function handleSelectionChangeState(items) {
   return {
     type: 'UPDATE_SELECTED_ITEMS',
@@ -165,6 +168,7 @@ export function handleSelectionChangeState(items) {
   }
 }
 
+// Sets the values for all forms on the rates page depending on the rates in the redux store.
 export function setFormValues(values) {
   return {
     type: 'SET_FORM_VALUES',
@@ -174,6 +178,7 @@ export function setFormValues(values) {
   }
 }
 
+// Handles the form value change.
 export function handleShippingFormChange(field, value) {
   return {
     type: 'UPDATE_SELECTED_FORM',
@@ -184,6 +189,7 @@ export function handleShippingFormChange(field, value) {
   }
 }
 
+// At the start of every async action this is set so the user may know an action is in progress.
 function requestStartAction() {
   return {
     type: 'REQUEST_START',
@@ -191,6 +197,7 @@ function requestStartAction() {
   }
 }
 
+// Called at the end of each async function so the user knows the action is complete.
 function requestCompleteCustomersAction(response) {
   return {
     type: 'REQUEST_CUSTOMERS_COMPLETE',
@@ -200,6 +207,7 @@ function requestCompleteCustomersAction(response) {
   }
 }
 
+// Finishes the async function of fetching shipping rates.
 function requestCompleteFetchRates(rates) {
   return {
     type: 'FETCH_SHIPPING_RATES_COMPLETE',
@@ -209,6 +217,7 @@ function requestCompleteFetchRates(rates) {
   }
 }
 
+// Finishes the async funcion of setting shipping rates.
 function requestCompleteShippingAction(shippingData) {
   return {
     type: 'SET_SHIPPING_RATES_COMPLETE',
@@ -218,6 +227,7 @@ function requestCompleteShippingAction(shippingData) {
   }
 }
 
+// Finishes the async function of deleting customer(s)
 function requestCompleteDeleteCustomersAction(data) {
   return {
     type: 'DELETE_CUSTOMERS_COMPLETE',
@@ -227,6 +237,7 @@ function requestCompleteDeleteCustomersAction(data) {
   }
 }
 
+// Triggered if an error occurs
 function requestErrorAction(requestError) {
   return {
     type: 'REQUEST_ERROR',
