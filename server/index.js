@@ -72,6 +72,7 @@ const shopifyConfig = {
   },
 }
 
+// Attempts to register the correct webhook using the shopify API
 const registerWebhook = function(shopDomain, accessToken, webhook) {
   const shopify = new ShopifyAPIClient({
     shopName: shopDomain,
@@ -90,6 +91,7 @@ const registerWebhook = function(shopDomain, accessToken, webhook) {
     )
 }
 
+// Attempts to register the Carrier server to to feed the app shipping data
 const registerCarrierService = function(
   shopDomain,
   accessToken,
@@ -328,16 +330,6 @@ app.post('/customer-list', bodyParser.json(), function(req, res) {
       }
     })
   } else {
-    // DELETE ME LATER
-    // function wait(ms) {
-    //   var start = new Date().getTime()
-    //   var end = start
-    //   while (end < start + ms) {
-    //     end = new Date().getTime()
-    //   }
-    // }
-    // wait(5000)
-    ///////////
 
     getCustomerList(req.body).then((result) => {
       res.status(200).json({ result })

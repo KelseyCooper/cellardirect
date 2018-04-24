@@ -1,3 +1,4 @@
+// Gets all customers from the server, then updates redux store
 export function fetchCustomers(filters) {
   const bodyData = JSON.stringify(filters)
 
@@ -23,6 +24,7 @@ export function fetchCustomers(filters) {
   }
 }
 
+// Gets shipping rates from the server, then updates redux store
 export function fetchRates() {
   const fetchOptions = {
     method: 'GET',
@@ -45,6 +47,7 @@ export function fetchRates() {
   }
 }
 
+// Sends an array of id's to the server to delete customers, then removes them from store.
 export function deleteCustomers(data) {
   const ids = { data }
   const bodyData = JSON.stringify(ids)
@@ -77,6 +80,7 @@ export function deleteCustomers(data) {
   }
 }
 
+// Used when a new shipping rates are submitted
 // Splits the string given into an array, removes spaces and splits on commas, also removed any empty "" indexes
 function splitTheString(CommaSepStr) {
   var ResultArray = []
@@ -101,6 +105,7 @@ function splitTheString(CommaSepStr) {
   return ResultArray
 }
 
+// Submits new shippign rates to the server, then updates redux store.
 export function submitformvalues(form) {
   let finalObject = {}
 
