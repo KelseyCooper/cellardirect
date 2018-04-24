@@ -57,8 +57,7 @@ Clone this repo
 ```yarn install```
 
 In the repo folder start a local tunnel using ngrok
-``` ./ngrok http 3000
-```
+``` ./ngrok http 3000```
 
 create new database named: cellardirect_node
 
