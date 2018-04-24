@@ -16,6 +16,7 @@ exports.up = function(knex, Promise) {
           .integer('customer_id')
           .unsigned()
           .references('customers.id')
+          .onDelete('CASCADE')
       }),
   
       knex.schema.createTable('purchased_items', table => {
@@ -26,6 +27,7 @@ exports.up = function(knex, Promise) {
           .integer('order_id')
           .unsigned()
           .references('orders.id')
+          .onDelete('CASCADE')
       }),
       knex.schema.createTable('shipping_rates', table => {
         table.specificType('AB', 'integer ARRAY')

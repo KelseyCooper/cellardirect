@@ -2,7 +2,6 @@ const ENV = process.env.ENV || 'development'
 const knexConfig = require('../knexfile')
 const knex = require('knex')(knexConfig[ENV])
 
-
 // Totals the case amount purchased, 12 = 1, 13 = 2.
 function caseAmount(num) {
   let number = Math.floor(num / 12) + 1
@@ -15,11 +14,11 @@ function caseAmount(num) {
 // Returns the shipping rates from the db
 function fetchShippingRates() {
   return knex('shipping_rates')
-  .select('*')
-  .returning('*')
-  .then((result) => {
-    return result
-  })
+    .select('*')
+    .returning('*')
+    .then((result) => {
+      return result
+    })
 }
 
 // finds address in the db
@@ -174,20 +173,22 @@ function genericShippingInfo(
 }
 
 // Calculates shipping amount
-async function shippingCalculator(rates, orderTotal, prePurchasedCases, province) {
-
+async function shippingCalculator(
+  rates,
+  orderTotal,
+  prePurchasedCases,
+  province,
+) {
   const shippingKey = caseAmount(orderTotal)
   const shippingRates = await fetchShippingRates()
 
   let shippingTotal = 0
 
   for (let index = prePurchasedCases; index < shippingKey; index++) {
-
     // Checks if there is an amount for the givben index, if not returns 0 (aka free)
     if (shippingRates[0][`${province}`][index]) {
       shippingTotal += shippingRates[0][`${province}`][index]
-    }
-    else {
+    } else {
       shippingTotal += 0
     }
   }
@@ -228,34 +229,14 @@ async function getCustomerList(filters) {
 
 // deletes customer, orders, and purchased_items from the db
 async function deleteCustomers(ids) {
-  await ids.map((id) => {
-    return knex('orders')
-      .where('customer_id', id)
-      .then((result) => {
-        result.map( async (item) => {
-          return await knex('purchased_items')
-            .where('order_id', item.id)
-            .del()
-        })
-        return true
-      })
-      .then(() => {
-        return knex('orders')
-          .where('customer_id', id)
-          .del()
-          .then(() => {
-            return true
-          })
-      })
-      .then(() => {
-        return knex('customers')
-          .where('id', id)
-          .del()
-        return true
-      })
-    return true
+
+  await ids.map(async (id) => {
+    await knex('customers')
+    .where('id', id)
+    .del()
   })
-  return true
+
+  return ids
 }
 
 // Search within an object for a key value
@@ -288,23 +269,20 @@ async function getCustomerListWithSearch(searchFilter, result) {
   return await searchResult
 }
 
-
 // Updates the shipping rates for all provinces, then returns the rates
 async function updateShipping(rates) {
-  
   for (let key in rates) {
-    await knex('shipping_rates')
-    .update({
-      [key]: rates[key]
+    await knex('shipping_rates').update({
+      [key]: rates[key],
     })
   }
 
   return await knex('shipping_rates')
-  .select('*')
-  .returning('*')
-  .then((result) => {
-    return result
-  })
+    .select('*')
+    .returning('*')
+    .then((result) => {
+      return result
+    })
 }
 
 module.exports = {

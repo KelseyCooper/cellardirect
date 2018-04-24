@@ -348,7 +348,7 @@ app.post('/customer-list', bodyParser.json(), function(req, res) {
 // Deletes a range of customers by their ids
 app.post('/delete-customers', bodyParser.json(), function(req, res) {
   //TODO write error handling, also authenticate header?
-  deleteCustomers(req.body.data).then(() => {
+  deleteCustomers(req.body.data).then((ids) => {
     res.status(200).json({ success: true })
   })
 })
