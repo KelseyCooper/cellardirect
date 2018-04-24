@@ -44,7 +44,7 @@ The admins of the store are given access to the full app, and are able to delete
 
 # Snap Shots
 
-!["Shipping Calculator"](https://gph.is/2HrfUCc)
+!["Shipping Calculator"](https://media.giphy.com/media/9Pk8K5yC4DvkNNbLrM/giphy.gif)
 
 !["Customer List"](https://media.giphy.com/media/ljH3nnZmZtCGCkpDku/giphy.gif)
 
