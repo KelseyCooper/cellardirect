@@ -24,7 +24,6 @@ function fetchShippingRates() {
 // finds address in the db
 async function findAddress(rate) {
   const { address1: address } = rate.destination
-  console.log(rate);
   
   const data = {}
   let orderTotal = 0

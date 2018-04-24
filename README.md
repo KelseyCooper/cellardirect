@@ -40,5 +40,12 @@ The admins of the store are given access to the full app, and are able to delete
 * shopify-express
 * shopify-api-node
 * pg
+* knex
 
 # Snap Shots
+
+!["Shipping Calculator"](https://gph.is/2HrfUCc)
+
+!["Customer List"](https://media.giphy.com/media/ljH3nnZmZtCGCkpDku/giphy.gif)
+
+!["Shipping Rates"](https://media.giphy.com/media/uiZ4fX434bcu2Y2H8k/giphy.gif)
