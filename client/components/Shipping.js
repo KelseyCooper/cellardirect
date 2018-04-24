@@ -13,7 +13,7 @@ import ShippingTextField from './ShippingTextField'
 
 import Alert from 'react-s-alert'
 import 'react-s-alert/dist/s-alert-default.css'
-import 'react-s-alert/dist/s-alert-css-effects/scale.css';
+import 'react-s-alert/dist/s-alert-css-effects/scale.css'
 
 class Shipping extends Component {
   componentDidMount() {
@@ -177,17 +177,16 @@ class Shipping extends Component {
           <Card.Section title="Shipping Rates">
             {requestInProgress ? spinner : shippingRatesCard}
           </Card.Section>
-          <Alert stack={{limit: 3}} />
+          <Alert stack={{ limit: 3 }} />
         </Card>
       </div>
     )
   }
   handleSubmit = (event) => {
-    this.props.submitformvalues(this.props.form)
-    .then(() => {
+    this.props.submitformvalues(this.props.form).then(() => {
       Alert.success('Shipping Rates have been updated', {
         position: 'top',
-        effect: 'scale'
+        effect: 'scale',
       })
     })
   }

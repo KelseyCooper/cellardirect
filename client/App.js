@@ -10,14 +10,9 @@ class App extends React.Component {
     const { apiKey, shopOrigin } = window
 
     return (
-      <AppProvider
-      shopOrigin={shopOrigin}
-      apiKey={apiKey}
-      >
-        <Page
-          title="Cellar Direct Custom Shipping"
-        >       
-        <Home />   
+      <AppProvider shopOrigin={shopOrigin} apiKey={apiKey}>
+        <Page title="Cellar Direct Custom Shipping">
+          <Home />
         </Page>
       </AppProvider>
     )

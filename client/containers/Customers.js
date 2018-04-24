@@ -14,7 +14,7 @@ const mapStateToProps = (state) => {
     selectedItems: state.selectedItems,
     appliedFilters: state.appliedFilters,
     searchValue: state.searchValue,
-    requestInProgress: state.requestInProgress
+    requestInProgress: state.requestInProgress,
   }
 }
 

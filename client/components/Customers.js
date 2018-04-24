@@ -32,11 +32,10 @@ class CustomersComponent extends Component {
   }
 
   deleteCustomersEvent = (e) => {
-    this.props.deleteCustomers(this.props.selectedItems)
-    .then (() => {
+    this.props.deleteCustomers(this.props.selectedItems).then(() => {
       Alert.success('Customer(s) have been successfully deleted!', {
         position: 'top',
-        effect: 'scale'
+        effect: 'scale',
       })
     })
   }
